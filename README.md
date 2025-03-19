@@ -1,0 +1,1 @@
+# BCG_Challenge_Gamma_team
