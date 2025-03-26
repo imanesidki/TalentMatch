@@ -16,41 +16,52 @@ export interface RegisterData {
   password: string;
 }
 
+export interface ProfileUpdateData {
+  firstname?: string;
+  lastname?: string;
+  email?: string;
+}
+
+export interface PasswordUpdateData {
+  current_password: string;
+  new_password: string;
+  confirm_password: string;
+}
+
+export interface UserData {
+  id: number;
+  email: string;
+  firstname: string;
+  lastname: string;
+  is_active: boolean;
+}
+
+export interface DecodedToken {
+  sub: string;  // email
+  exp: number;
+}
+
 export interface AuthResponse {
   access_token: string;
   token_type: string;
 }
 
-export interface DecodedToken {
-  sub: string;  // email
-  exp: number;  // expiration timestamp
-}
-
-// Set token in both localStorage and cookie
-function setToken(token: string): void {
+// Set authentication token
+export function setToken(token: string): void {
   if (typeof window === 'undefined') return;
   
-  // Set in localStorage
   localStorage.setItem('auth_token', token);
-  
-  // Set in cookie for middleware access (7 day expiry)
-  Cookies.set('ls_auth_token', token, { expires: 7, path: '/' });
   Cookies.set('auth_token', token, { expires: 7, path: '/' });
-  
-  // Force a cookie-change event by setting a dummy cookie
-  Cookies.set('auth_timestamp', Date.now().toString(), { path: '/' });
+  Cookies.set('ls_auth_token', token, { expires: 7, path: '/' });
 }
 
-// Clear token from both localStorage and cookie
-function clearToken(): void {
+// Clear authentication token
+export function clearToken(): void {
   if (typeof window === 'undefined') return;
   
-  // Clear from localStorage
   localStorage.removeItem('auth_token');
-  
-  // Clear from cookies
-  Cookies.remove('ls_auth_token', { path: '/' });
   Cookies.remove('auth_token', { path: '/' });
+  Cookies.remove('ls_auth_token', { path: '/' });
 }
 
 // Login user
@@ -175,4 +186,71 @@ export function getAuthUser(): { email: string } | null {
   } catch (error) {
     return null;
   }
-} 
+}
+
+// Get full user profile
+export async function getUserProfile(): Promise<UserData> {
+  const token = getToken();
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+
+  const response = await fetch(`${API_URL}/auth/me`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to fetch profile');
+  }
+
+  return await response.json();
+}
+
+// Update user profile
+export async function updateUserProfile(profileData: ProfileUpdateData): Promise<UserData> {
+  const token = getToken();
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+
+  const response = await fetch(`${API_URL}/auth/me`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(profileData)
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to update profile');
+  }
+
+  return await response.json();
+}
+
+// Update user password
+export async function updatePassword(passwordData: PasswordUpdateData): Promise<void> {
+  const token = getToken();
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+
+  const response = await fetch(`${API_URL}/auth/me/password`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(passwordData)
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to update password');
+  }
+}
