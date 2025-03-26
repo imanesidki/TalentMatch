@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, validator
 from typing import List, Optional, Set
 from datetime import datetime
 from enum import Enum
@@ -112,22 +112,41 @@ class Score(ScoreBase):
 
 # Recruiter schemas
 class RecruiterBase(BaseModel):
+    email: EmailStr
     firstname: str
     lastname: str
-    email: EmailStr
 
 class RecruiterCreate(RecruiterBase):
     password: str
+    
+    @validator('password')
+    def password_strength(cls, v):
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters long')
+        if not any(char.isdigit() for char in v):
+            raise ValueError('Password must contain at least one number')
+        if not any(not char.isalnum() for char in v):
+            raise ValueError('Password must contain at least one special character')
+        return v
 
-class Recruiter(RecruiterBase):
+class RecruiterResponse(RecruiterBase):
     id: int
     is_active: bool
-    created_at: datetime
-    updated_at: datetime
-
+    
     class Config:
         orm_mode = True
-        from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+
+# Add the login schema
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
 
 # Note schemas
 class NoteBase(BaseModel):

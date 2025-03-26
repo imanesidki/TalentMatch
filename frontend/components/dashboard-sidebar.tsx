@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { useSidebar } from "@/components/sidebar-provider"
 import { cn } from "@/lib/utils"
 import { BarChart, FileText, Home, Settings, LogOut } from "lucide-react"
+import { logout } from "@/lib/auth"
 
 const sidebarNavItems = [
   {
@@ -74,6 +75,11 @@ export function DashboardSidebar() {
     close()
   }, [pathname, close])
 
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    await logout()
+  }
+
   return (
     <>
       <aside className="w-64 flex-col border-r bg-background hidden lg:block ">
@@ -87,11 +93,9 @@ export function DashboardSidebar() {
           <SidebarNav items={sidebarNavItems} className="px-4" />
         </ScrollArea>
         <div className="fixed bottom-0 w-64 border-t p-4">
-          <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
-            <Link href="/logout">
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Link>
+          <Button variant="ghost" size="sm" className="w-full justify-start" onClick={handleLogout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
           </Button>
         </div>
       </aside>
@@ -111,11 +115,9 @@ export function DashboardSidebar() {
             <SidebarNav items={sidebarNavItems} />
           </ScrollArea>
           <div className="mt-auto border-t p-4">
-            <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
-              <Link href="/logout">
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
-              </Link>
+            <Button variant="ghost" size="sm" className="w-full justify-start" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
             </Button>
           </div>
         </SheetContent>

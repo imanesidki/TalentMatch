@@ -1,23 +1,27 @@
-import type React from "react"
+"use client"
+
 import { SidebarProvider } from "@/components/sidebar-provider"
 import { DashboardSidebar } from "@/components/dashboard-sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
+import ProtectedRoute from "@/components/protected-route"
 
-export default function DashboardLayout({
+export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <SidebarProvider>
-      <div className="flex flex-col h-screen">
-        <DashboardHeader />
-        <div className="flex flex-1 overflow-hidden">
-          <DashboardSidebar />
-          <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
+    <ProtectedRoute>
+      <SidebarProvider>
+        <div className="flex flex-col h-screen">
+          <DashboardHeader />
+          <div className="flex flex-1 overflow-hidden">
+            <DashboardSidebar />
+            <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </ProtectedRoute>
   )
 }
 

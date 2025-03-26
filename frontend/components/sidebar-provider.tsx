@@ -1,36 +1,35 @@
 "use client"
 
-import * as React from "react"
+import { createContext, useContext, useState, ReactNode } from "react"
 
-type SidebarContextType = {
+interface SidebarContextType {
   isOpen: boolean
   toggle: () => void
   close: () => void
 }
 
-const SidebarContext = React.createContext<SidebarContextType | undefined>(undefined)
+const SidebarContext = createContext<SidebarContextType | undefined>(undefined)
 
-export function SidebarProvider({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const [isOpen, setIsOpen] = React.useState(false)
+interface SidebarProviderProps {
+  children: ReactNode
+}
 
-  const toggle = React.useCallback(() => {
-    setIsOpen((prev) => !prev)
-  }, [])
+export function SidebarProvider({ children }: SidebarProviderProps) {
+  const [isOpen, setIsOpen] = useState(false)
 
-  const close = React.useCallback(() => {
-    setIsOpen(false)
-  }, [])
+  const toggle = () => setIsOpen(!isOpen)
+  const close = () => setIsOpen(false)
 
-  return <SidebarContext.Provider value={{ isOpen, toggle, close }}>{children}</SidebarContext.Provider>
+  return (
+    <SidebarContext.Provider value={{ isOpen, toggle, close }}>
+      {children}
+    </SidebarContext.Provider>
+  )
 }
 
 export function useSidebar() {
-  const context = React.useContext(SidebarContext)
-  if (!context) {
+  const context = useContext(SidebarContext)
+  if (context === undefined) {
     throw new Error("useSidebar must be used within a SidebarProvider")
   }
   return context

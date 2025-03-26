@@ -1,21 +1,15 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { useSidebar } from "@/components/sidebar-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Menu } from "lucide-react"
+import { getAuthUser } from "@/lib/auth"
 
 export function DashboardHeader() {
   const { toggle } = useSidebar()
-
+  const user = getAuthUser()
+  
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background px-4 sm:px-6">
       <Button variant="ghost" size="icon" className="lg:hidden" onClick={toggle}>
