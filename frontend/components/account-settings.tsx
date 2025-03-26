@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { getUserProfile, updateUserProfile, updatePassword, UserData, ProfileUpdateData, PasswordUpdateData } from "@/lib/auth";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
 export function AccountSettings() {
@@ -108,8 +107,10 @@ export function AccountSettings() {
       const updatedUser = await updateUserProfile(changedData);
       setUser(updatedUser);
       toast({
-        title: "Success",
-        description: "Your profile has been updated",
+        title: "Success!",
+        description: "Your profile has been updated successfully",
+        variant: "default",
+        className: "bg-secondary"
       });
       
       // Refresh the page to update the UI with new user data
@@ -153,8 +154,10 @@ export function AccountSettings() {
     try {
       await updatePassword(passwordData);
       toast({
-        title: "Success",
-        description: "Your password has been updated",
+        title: "Success!",
+        description: "Your password has been updated successfully",
+        variant: "default",
+        className: "bg-secondary"
       });
       
       // Reset password form
@@ -192,28 +195,6 @@ export function AccountSettings() {
         <CardContent>
           <form onSubmit={handleProfileUpdate}>
             <div className="space-y-6">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <Avatar className="h-20 w-20">
-                  <AvatarImage
-                    src="/placeholder-user.jpg?height=80&width=80"
-                    alt="Profile"
-                  />
-                  <AvatarFallback>{getInitials()}</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col gap-2">
-                  <Button variant="outline" size="sm" type="button">
-                    Change Avatar
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground"
-                    type="button"
-                  >
-                    Remove
-                  </Button>
-                </div>
-              </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
@@ -266,17 +247,20 @@ export function AccountSettings() {
                   <Input 
                     id="current-password" 
                     type="password"
+                    placeholder="* * * * * * * *"
                     value={passwordData.current_password}
                     onChange={handlePasswordChange}
                     required
                   />
                 </div>
 
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="new-password">New Password</Label>
                   <Input 
                     id="new-password" 
                     type="password"
+                    placeholder="* * * * * * * *"
                     value={passwordData.new_password}
                     onChange={handlePasswordChange}
                     required
@@ -288,10 +272,12 @@ export function AccountSettings() {
                   <Input 
                     id="confirm-password" 
                     type="password"
+                    placeholder="* * * * * * * *"
                     value={passwordData.confirm_password}
                     onChange={handlePasswordChange}
                     required
                   />
+                </div>
                 </div>
               </div>
             </div>
