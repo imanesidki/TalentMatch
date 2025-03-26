@@ -14,6 +14,8 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+  // Enable webpack to handle Dockerizing
+  output: 'standalone',
 }
 
 export default nextConfig
