@@ -3,8 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { JobDetails } from "@/components/job-details"
 import { JobCandidates } from "@/components/job-candidates"
-import { JobSettings } from "@/components/job-settings"
-import { createQueryString, useQueryString } from "@/lib/use-query-string"
+import { SubmitResumes } from "@/components/submit-resumes"
 import { useRouter, usePathname } from "next/navigation"
 
 interface JobTabsProps {
@@ -34,17 +33,17 @@ export default function JobTabs({ jobId, defaultTab }: JobTabsProps) {
     <Tabs defaultValue={activeTab} onValueChange={handleTabChange}>
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="details">Job Details</TabsTrigger>
-        <TabsTrigger value="matches">Candidates</TabsTrigger>
-        <TabsTrigger value="settings">Match Settings</TabsTrigger>
+        <TabsTrigger value="submit">Submit Resumes</TabsTrigger>
+        <TabsTrigger value="matches">Scored Candidates</TabsTrigger>
       </TabsList>
       <TabsContent value="details" className="mt-4">
         <JobDetails jobId={jobId} />
       </TabsContent>
+      <TabsContent value="submit" className="mt-4">
+        <SubmitResumes />
+      </TabsContent>
       <TabsContent value="matches" className="mt-4">
         <JobCandidates />
-      </TabsContent>
-      <TabsContent value="settings" className="mt-4">
-        <JobSettings />
       </TabsContent>
     </Tabs>
   )

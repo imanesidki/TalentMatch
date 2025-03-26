@@ -6,7 +6,6 @@ import { CandidateProfile } from "@/components/candidate-profile"
 import { CandidateSkillMatch } from "@/components/candidate-skill-match"
 import { CandidateResume } from "@/components/candidate-resume"
 import { CandidateNotes } from "@/components/candidate-notes"
-import { CandidateJobMatches } from "@/components/candidate-job-matches"
 
 interface CandidateTabsProps {
   candidateId: string
@@ -18,11 +17,10 @@ export function CandidateTabs({ candidateId }: CandidateTabsProps) {
 
   return (
     <Tabs defaultValue={defaultTab}>
-      <TabsList className="grid w-full grid-cols-5">
+      <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="profile">Profile</TabsTrigger>
         <TabsTrigger value="skills">Skills</TabsTrigger>
         <TabsTrigger value="resume">Resume</TabsTrigger>
-        <TabsTrigger value="matches">Job Matches</TabsTrigger>
         <TabsTrigger value="notes">Notes</TabsTrigger>
       </TabsList>
       <TabsContent value="profile" className="mt-4">
@@ -33,9 +31,6 @@ export function CandidateTabs({ candidateId }: CandidateTabsProps) {
       </TabsContent>
       <TabsContent value="resume" className="mt-4">
         <CandidateResume />
-      </TabsContent>
-      <TabsContent value="matches" className="mt-4">
-        <CandidateJobMatches />
       </TabsContent>
       <TabsContent value="notes" className="mt-4">
         <CandidateNotes />

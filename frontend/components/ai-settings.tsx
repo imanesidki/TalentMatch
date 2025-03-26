@@ -82,52 +82,6 @@ export function AISettings() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Resume Parsing Settings</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <h3 className="font-medium">Information to Extract</h3>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="extract-contact">Contact Information</Label>
-                <p className="text-sm text-muted-foreground">Name, email, phone, location</p>
-              </div>
-              <Switch id="extract-contact" defaultChecked />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="extract-experience">Work Experience</Label>
-                <p className="text-sm text-muted-foreground">Job titles, companies, dates, responsibilities</p>
-              </div>
-              <Switch id="extract-experience" defaultChecked />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="extract-education">Education</Label>
-                <p className="text-sm text-muted-foreground">Degrees, institutions, dates</p>
-              </div>
-              <Switch id="extract-education" defaultChecked />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="extract-skills">Skills</Label>
-                <p className="text-sm text-muted-foreground">Technical skills, soft skills, certifications</p>
-              </div>
-              <Switch id="extract-skills" defaultChecked />
-            </div>
-          </div>
-
-          <div className="pt-2">
-            <Button>Save Settings</Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

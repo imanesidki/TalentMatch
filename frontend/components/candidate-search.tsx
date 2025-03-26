@@ -119,7 +119,7 @@ export function CandidateSearch() {
           )}
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="icon" onClick={() => setShowFilters(!showFilters)}>
+          <Button className="bg-primary text-white" variant="outline" size="icon" onClick={() => setShowFilters(!showFilters)}>
             <SlidersHorizontal className="h-4 w-4" />
             <span className="sr-only">Toggle filters</span>
           </Button>
@@ -130,8 +130,6 @@ export function CandidateSearch() {
             <SelectContent>
               <SelectItem value="match-desc">Match Score (High to Low)</SelectItem>
               <SelectItem value="match-asc">Match Score (Low to High)</SelectItem>
-              <SelectItem value="date-desc">Date Added (Newest)</SelectItem>
-              <SelectItem value="date-asc">Date Added (Oldest)</SelectItem>
             </SelectContent>
           </Select>
         </div>

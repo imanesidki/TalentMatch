@@ -7,30 +7,23 @@ import { Label } from "@/components/ui/label"
 const integrations = [
   {
     id: "1",
-    name: "Applicant Tracking System",
-    description: "Connect to your existing ATS to import candidates and jobs",
-    connected: true,
-    logo: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    id: "2",
     name: "Job Boards",
     description: "Post jobs to multiple job boards with a single click",
     connected: false,
     logo: "/placeholder.svg?height=40&width=40",
   },
   {
-    id: "3",
+    id: "2",
     name: "Calendar",
     description: "Sync with your calendar for interview scheduling",
-    connected: true,
+    connected: false,
     logo: "/placeholder.svg?height=40&width=40",
   },
   {
-    id: "4",
+    id: "3",
     name: "Email",
     description: "Send emails to candidates directly from the platform",
-    connected: false,
+    connected: true,
     logo: "/placeholder.svg?height=40&width=40",
   },
 ]
@@ -41,7 +34,7 @@ export function IntegrationSettings() {
       {integrations.map((integration) => (
         <Card key={integration.id}>
           <CardHeader className="flex flex-row items-start justify-between space-y-0">
-            <div>
+            <div className="space-y-2">
               <CardTitle>{integration.name}</CardTitle>
               <CardDescription>{integration.description}</CardDescription>
             </div>

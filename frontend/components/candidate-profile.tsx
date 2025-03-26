@@ -5,15 +5,17 @@ export function CandidateProfile() {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle>Summary</CardTitle>
+      <CardHeader>
+          <CardTitle>AI-Generated Resume Summary</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Experienced software engineer with 8 years of expertise in building scalable web applications. Proficient in
-            JavaScript, TypeScript, React, and Node.js. Strong problem-solving skills and a track record of delivering
-            high-quality code. Passionate about creating intuitive user experiences and optimizing application
-            performance.
+          <p className="text-md text-muted-foreground">
+            Sarah Johnson is a highly skilled Senior Software Engineer with 8 years of experience specializing in
+            full-stack web development. Her expertise in JavaScript, TypeScript, React, and Node.js makes her an
+            excellent candidate for senior engineering roles. She has demonstrated leadership abilities through
+            mentoring junior developers and implementing architecture improvements that significantly enhanced system
+            reliability. Her strong educational background from top universities complements her practical experience,
+            and her diverse skill set spans frontend, backend, DevOps, and database technologies.
           </p>
         </CardContent>
       </Card>

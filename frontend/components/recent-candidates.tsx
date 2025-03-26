@@ -50,11 +50,9 @@ export function RecentCandidates() {
             <AvatarFallback>{candidate.initials}</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">
-              <Link href={`/candidates/${candidate.id}`} className="hover:underline">
-                {candidate.name}
-              </Link>
-            </p>
+            <h1 className="font-semibold">
+              {candidate.name}
+            </h1>
             <p className="text-sm text-muted-foreground">{candidate.position}</p>
           </div>
           <div className="ml-auto font-medium">

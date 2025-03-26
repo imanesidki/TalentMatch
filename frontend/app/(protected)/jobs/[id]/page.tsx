@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, Edit, Share } from "lucide-react"
+import { ArrowLeft, Edit, Share, Upload } from "lucide-react"
 import Link from "next/link"
 import { Suspense } from "react"
 import JobTabs from "@/components/job-tabs"
@@ -9,7 +9,7 @@ export default async function JobDetailsPage({ params, searchParams }: {
   params: { id: string }, 
   searchParams: { tab?: string } 
 }) {
-  // In a real app, we would fetch the job data based on the ID
+
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   
@@ -29,10 +29,6 @@ export default async function JobDetailsPage({ params, searchParams }: {
           <h1 className="text-3xl font-bold tracking-tight">Job Details</h1>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Share className="mr-2 h-4 w-4" />
-            Share
-          </Button>
           <Button size="sm" asChild>
             <Link href={`/jobs/${jobId}/edit`}>
               <Edit className="mr-2 h-4 w-4" />
@@ -42,7 +38,7 @@ export default async function JobDetailsPage({ params, searchParams }: {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-4 min-h-screen">
         <Card className="md:col-span-1">
           <CardHeader>
             <CardTitle>Senior Software Engineer</CardTitle>
@@ -70,7 +66,7 @@ export default async function JobDetailsPage({ params, searchParams }: {
           </CardContent>
         </Card>
 
-        <div className="md:col-span-2">
+        <div className="md:col-span-3">
           <Suspense fallback={<div>Loading...</div>}>
             <JobTabs jobId={jobId} defaultTab={currentTab} />
           </Suspense>

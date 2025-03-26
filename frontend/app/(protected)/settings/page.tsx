@@ -11,15 +11,11 @@ export default function SettingsPage() {
         <p className="text-muted-foreground">Manage your account settings and preferences.</p>
       </div>
 
-      <Tabs defaultValue="ai">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="ai">AI Settings</TabsTrigger>
+      <Tabs defaultValue="account">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
         </TabsList>
-        <TabsContent value="ai" className="mt-4">
-          <AISettings />
-        </TabsContent>
         <TabsContent value="account" className="mt-4">
           <AccountSettings />
         </TabsContent>

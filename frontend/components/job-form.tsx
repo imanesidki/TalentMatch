@@ -144,7 +144,6 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // In a real app, we would submit the form data to an API
     console.log("Form submitted:", formData)
 
     // Redirect to the jobs page

@@ -5,7 +5,6 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export default async function EditJobPage({ params }: { params: { id: string } }) {
-  // In a real app, we would fetch the job data based on the ID
   const jobId = await params.id
 
   return (
