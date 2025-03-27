@@ -21,7 +21,20 @@ if (typeof window !== 'undefined') {
   console.log('Frontend API URL:', API_URL);
 }
 
-export function ResumeUploader({ setStep }: { setStep: (step: number) => void }) {
+export function ResumeUploader({ 
+  setStep, 
+  jobId,
+  weights 
+}: { 
+  setStep: (step: number) => void,
+  jobId: string,
+  weights: {
+    skill: number,
+    experience: number,
+    education: number,
+    location: number
+  }
+}) {
   const [files, setFiles] = useState<File[]>([])
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -39,6 +52,13 @@ export function ResumeUploader({ setStep }: { setStep: (step: number) => void })
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files)
+      const totalFiles = files.length + newFiles.length
+      
+      if (totalFiles > 6) {
+        toast.error(`You can only upload up to 6 files at once. You currently have ${files.length} files selected.`)
+        return
+      }
+      
       setFiles([...files, ...newFiles])
     }
   }
@@ -52,88 +72,83 @@ export function ResumeUploader({ setStep }: { setStep: (step: number) => void })
   const handleUpload = async () => {
     if (files.length === 0) return
 
+    if (files.length > 6) {
+      toast.error("You can only upload up to 6 files at once")
+      return
+    }
+
     setUploading(true)
     setProgress(0)
-    setCurrentFileIndex(0)
     
-    // Calculate progress increment per file
-    const progressIncrement = 100 / files.length
-    
-    // Upload files one by one
-    const uploadedFiles = []
-    let hasErrors = false
-    
-    for (let i = 0; i < files.length; i++) {
-      setCurrentFileIndex(i)
+    try {
+      // Create form data for all files
+      const formData = new FormData()
+      files.forEach(file => {
+        formData.append('files', file)
+      })
+      formData.append('job_id', jobId)
+      formData.append('skill_weight', weights.skill.toString())
+      formData.append('experience_weight', weights.experience.toString())
+      formData.append('education_weight', weights.education.toString())
+      formData.append('location_weight', weights.location.toString())
       
-      try {
-        // Create form data for this file
-        const formData = new FormData()
-        formData.append('file', files[i])
-        
-        // Debug log for file upload
-        console.log(`Uploading file: ${files[i].name} (${files[i].size} bytes) to ${API_URL}/s3/upload`);
-        
-        // Send the file to the backend
-        const response = await fetch(`${API_URL}/s3/upload`, {
-          method: 'POST',
-          body: formData,
-          credentials: 'include', // Include cookies in the request
-          headers: {
-            // Don't set Content-Type header when using FormData
-            // Browser will set it automatically with the correct boundary
-          }
+      // Debug log for file upload
+      console.log(`Uploading ${files.length} files to ${API_URL}/s3/upload with job_id: ${jobId} and weights:`, weights);
+      
+      // Send all files to the backend
+      const response = await fetch(`${API_URL}/s3/upload`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include', // Include cookies in the request
+        headers: {
+          // Don't set Content-Type header when using FormData
+          // Browser will set it automatically with the correct boundary
+        }
+      })
+      
+      if (!response.ok) {
+        // Get more detailed error information
+        let errorDetail = response.statusText;
+        try {
+          const errorJson = await response.json();
+          errorDetail = errorJson.detail || errorJson.message || errorDetail;
+        } catch (e) {
+          // If we can't parse JSON, just use the status text
+        }
+        console.error(`Upload failed with status ${response.status}: ${errorDetail}`);
+        throw new Error(`Upload failed: ${errorDetail}`);
+      }
+      
+      const result = await response.json()
+      console.log('Upload result:', result);
+      
+      // Update progress to 100%
+      setProgress(100)
+      
+      // Handle any errors from individual files
+      if (result.errors && result.errors.length > 0) {
+        result.errors.forEach((error: string) => {
+          toast.error(error)
         })
-        
-        if (!response.ok) {
-          // Get more detailed error information
-          let errorDetail = response.statusText;
-          try {
-            const errorJson = await response.json();
-            errorDetail = errorJson.detail || errorJson.message || errorDetail;
-          } catch (e) {
-            // If we can't parse JSON, just use the status text
-          }
-          console.error(`Upload failed with status ${response.status}: ${errorDetail}`);
-          throw new Error(`Upload failed: ${errorDetail}`);
+        if (result.uploaded_files.length > 0) {
+          toast.warning(`Successfully uploaded ${result.uploaded_files.length} of ${files.length} files`)
         }
-        
-        const result = await response.json()
-        console.log(`Upload successful for ${files[i].name}:`, result);
-        uploadedFiles.push(result)
-        
-        // Update progress
-        setProgress((i + 1) * progressIncrement)
-        
-      } catch (error) {
-        console.error(`Error uploading ${files[i].name}:`, error)
-        // More detailed error logging
-        if (error instanceof Error) {
-          console.error('Error details:', error.message)
-        }
-        toast.error(`Failed to upload ${files[i].name}`)
-        hasErrors = true
-        // Continue with next file even if this one failed
-      }
-    }
-    
-    // All uploads completed
-    setUploading(false)
-    setUploadComplete(true)
-    
-    // Show success or partial success message
-    if (hasErrors) {
-      if (uploadedFiles.length > 0) {
-        toast.warning(`Uploaded ${uploadedFiles.length} of ${files.length} files`)
       } else {
-        toast.error('Failed to upload any files')
+        toast.success(`Successfully uploaded ${result.uploaded_files.length} files`)
       }
-    } else {
-      toast.success(`Successfully uploaded ${files.length} files`)
+      
+      // Set upload complete
+      setUploadComplete(true)
+      
+    } catch (error) {
+      console.error('Error uploading files:', error)
+      if (error instanceof Error) {
+        console.error('Error details:', error.message)
+      }
+      toast.error('Failed to upload files')
+    } finally {
+      setUploading(false)
     }
-    
-    // You might want to do something with the uploaded files
-    console.log('Uploaded files:', uploadedFiles)
   }
 
   return (
@@ -145,7 +160,7 @@ export function ResumeUploader({ setStep }: { setStep: (step: number) => void })
               <div className="flex flex-col items-center justify-center text-center">
                 <Upload className="mb-2 h-10 w-10 text-muted-foreground" />
                 <h3 className="font-medium">Select your resumes here</h3>
-                <p className="text-sm text-muted-foreground">Click to browse files (PDF, DOCX, DOC)</p>
+                <p className="text-sm text-muted-foreground">Click to browse files (PDF, DOCX, DOC) - Max 6 files</p>
               </div>
               <input
                 type="file"
@@ -167,7 +182,7 @@ export function ResumeUploader({ setStep }: { setStep: (step: number) => void })
         <Card>  
           <CardContent className="p-6">
             <div className="flex justify-between gap-2 mb-4 items-center">
-              <h3 className="font-medium">Selected Files ({files.length})</h3>
+              <h3 className="font-medium">Selected Files ({files.length}/6)</h3>
               <div className="flex gap-2 justify-end">
                 <Button variant="outline" onClick={() => setFiles([])} disabled={uploading}>
                   Clear All
