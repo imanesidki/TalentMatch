@@ -73,7 +73,7 @@ export function DashboardSidebar() {
 
   React.useEffect(() => {
     close()
-  }, [pathname, close])
+  }, [pathname])
 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault()

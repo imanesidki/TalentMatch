@@ -8,7 +8,7 @@ import { Menu } from "lucide-react"
 
 export function DashboardHeader() {
   const { isLoading, currentUser } = useAppData()
-  const { toggleSidebar } = useSidebar()
+  const { toggle } = useSidebar()
 
   // Get user initials from name
   const getUserInitials = () => {
@@ -23,7 +23,7 @@ export function DashboardHeader() {
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
-      <Button variant="ghost" size="icon" className="md:hidden" onClick={toggleSidebar}>
+      <Button variant="ghost" size="icon" className="md:hidden" onClick={toggle}>
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle Menu</span>
       </Button>
