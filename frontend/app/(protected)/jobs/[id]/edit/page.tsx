@@ -3,9 +3,13 @@ import { Card } from "@/components/ui/card"
 import { JobForm } from "@/components/job-form"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { getJob } from "@/lib/api/jobs"
 
 export default async function EditJobPage({ params }: { params: { id: string } }) {
   const jobId = await params.id
+  
+  // Fetch job data from the API
+  const job = await getJob(jobId)
 
   return (
     <div className="space-y-6">
@@ -22,7 +26,7 @@ export default async function EditJobPage({ params }: { params: { id: string } }
       </div>
 
       <Card>
-        <JobForm isEditing jobId={jobId} />
+        <JobForm isEditing jobId={jobId} jobData={job} />
       </Card>
     </div>
   )

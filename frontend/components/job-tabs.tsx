@@ -5,13 +5,15 @@ import { JobDetails } from "@/components/job-details"
 import { JobCandidates } from "@/components/job-candidates"
 import { SubmitResumes } from "@/components/submit-resumes"
 import { useRouter, usePathname } from "next/navigation"
+import { Job } from "@/lib/api/jobs"
 
 interface JobTabsProps {
   jobId: string
   defaultTab?: string
+  job?: Job
 }
 
-export default function JobTabs({ jobId, defaultTab }: JobTabsProps) {
+export default function JobTabs({ jobId, defaultTab, job }: JobTabsProps) {
   const router = useRouter()
   const pathname = usePathname()
 
@@ -37,7 +39,7 @@ export default function JobTabs({ jobId, defaultTab }: JobTabsProps) {
         <TabsTrigger value="matches">Scored Candidates</TabsTrigger>
       </TabsList>
       <TabsContent value="details" className="mt-4">
-        <JobDetails jobId={jobId} />
+        <JobDetails jobId={jobId} job={job} />
       </TabsContent>
       <TabsContent value="submit" className="mt-4">
         <SubmitResumes />

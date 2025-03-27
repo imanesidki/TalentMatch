@@ -13,60 +13,34 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plus, X } from "lucide-react"
-
-// Mock job data for editing
-const mockJobData = {
-  title: "Senior Software Engineer",
-  department: "Engineering",
-  location: "San Francisco, CA",
-  type: "Full-time",
-  salary: "$120,000 - $150,000",
-  description:
-    "We're looking for a Senior Software Engineer to join our team and help build scalable web applications. The ideal candidate will have strong experience with JavaScript, TypeScript, React, and Node.js, and a passion for writing clean, maintainable code.",
-  responsibilities: [
-    "Design and implement new features for our web applications",
-    "Write clean, maintainable, and well-tested code",
-    "Collaborate with product managers, designers, and other engineers",
-    "Review code and provide constructive feedback to peers",
-    "Mentor junior engineers and help them grow",
-    "Participate in technical design discussions and architecture decisions",
-  ],
-  requirements: [
-    "5+ years of experience in software development",
-    "Strong proficiency in JavaScript, TypeScript, React, and Node.js",
-    "Experience with RESTful APIs and GraphQL",
-    "Familiarity with AWS or other cloud platforms",
-    "Knowledge of CI/CD pipelines and DevOps practices",
-    "Bachelor's degree in Computer Science or related field, or equivalent experience",
-  ],
-  niceToHave: [
-    "Experience with serverless architectures",
-    "Knowledge of AWS Lambda and other AWS services",
-    "Experience with microservices architecture",
-    "Contributions to open-source projects",
-  ],
-  benefits: [
-    "Competitive salary and equity package",
-    "Health, dental, and vision insurance",
-    "401(k) with company match",
-    "Flexible work hours and remote work options",
-    "Unlimited PTO policy",
-    "Professional development budget",
-    "Home office stipend",
-  ],
-  skills: ["JavaScript", "TypeScript", "React", "Node.js", "REST APIs", "GraphQL", "AWS", "CI/CD"],
-}
+import { toast } from "sonner"
+import { createJob, updateJob, Job } from "@/lib/api/jobs"
 
 interface JobFormProps {
   isEditing?: boolean
   jobId?: string
+  jobData?: Job
 }
 
-export function JobForm({ isEditing = false, jobId }: JobFormProps) {
+export function JobForm({ isEditing = false, jobId, jobData }: JobFormProps) {
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState("basic")
   const [formData, setFormData] = useState(
-    isEditing
-      ? mockJobData
+    isEditing && jobData
+      ? {
+          title: jobData.title || "",
+          department: jobData.department || "",
+          location: jobData.location || "",
+          type: jobData.type || "",
+          salary: jobData.salary || "",
+          description: jobData.description || "",
+          responsibilities: jobData.responsibilities || [""],
+          requirements: jobData.requirements || [""],
+          niceToHave: jobData.nice_to_have || [""],
+          benefits: jobData.benefits || [""],
+          skills: jobData.skills || [],
+        }
       : {
           title: "",
           department: "",
@@ -79,7 +53,7 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
           niceToHave: [""],
           benefits: [""],
           skills: [],
-        },
+        }
   )
 
   const [newSkill, setNewSkill] = useState("")
@@ -118,7 +92,7 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
   const removeSkill = (skill: string) => {
     setFormData({
       ...formData,
-      skills: formData.skills.filter((s) => s !== skill),
+      skills: formData.skills.filter((s: string) => s !== skill),
     })
   }
 
@@ -138,22 +112,85 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
   const removeListItem = (listName: "responsibilities" | "requirements" | "niceToHave" | "benefits", index: number) => {
     setFormData({
       ...formData,
-      [listName]: formData[listName].filter((_, i) => i !== index),
+      [listName]: formData[listName].filter((_: string, i: number) => i !== index),
     })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Form submitted:", formData)
+  const validateForm = () => {
+    // Check required fields
+    if (!formData.title.trim()) {
+      toast.error("Job title is required")
+      setActiveTab("basic")
+      return false
+    }
+    if (!formData.type) {
+      toast.error("Job type is required")
+      setActiveTab("basic")
+      return false
+    }
+    if (!formData.description.trim()) {
+      toast.error("Job description is required")
+      setActiveTab("description")
+      return false
+    }
+    if (formData.skills.length === 0) {
+      toast.error("At least one required skill is needed")
+      setActiveTab("skills")
+      return false
+    }
+    if (formData.responsibilities.length === 0) {
+      toast.error("At least one responsibility is needed")
+      setActiveTab("responsibilities")
+      return false
+    }
+    if (formData.requirements.length === 0) {
+      toast.error("At least one requirement is needed")
+      setActiveTab("requirements")
+      return false
+    }
+    if (formData.location.length === 0) {
+      toast.error("Location is required")
+      setActiveTab("location")
+      return false
+    }
+    if (formData.department.length === 0) {
+      toast.error("Department is required")
+      setActiveTab("department")
+      return false
+    }
+    return true
+  }
 
-    // Redirect to the jobs page
-    router.push("/jobs")
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!validateForm()) {
+      return
+    }
+    
+    setLoading(true)
+    
+    try {
+      if (isEditing && jobId) {
+        await updateJob(jobId, formData)
+        toast.success("Job updated successfully")
+      } else {
+        await createJob(formData)
+        toast.success("Job created successfully")
+      }
+      router.push("/jobs")
+    } catch (error) {
+      console.error("Error saving job:", error)
+      toast.error(error instanceof Error ? error.message : "Failed to save job")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <form onSubmit={handleSubmit}>
       <CardContent className="p-6">
-        <Tabs defaultValue="basic">
+        <Tabs defaultValue="basic" value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="basic">Basic Info</TabsTrigger>
             <TabsTrigger value="description">Description</TabsTrigger>
@@ -163,7 +200,9 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
 
           <TabsContent value="basic" className="mt-6 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Job Title</Label>
+              <Label htmlFor="title">
+                Job Title <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="title"
                 name="title"
@@ -176,8 +215,26 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
-                <Select value={formData.department} onValueChange={(value) => handleSelectChange("department", value)}>
+                <Label htmlFor="type">
+                  Job Type <span className="text-red-500">*</span>
+                </Label>
+                <Select value={formData.type} onValueChange={(value) => handleSelectChange("type", value)} required>
+                  <SelectTrigger id="type">
+                    <SelectValue placeholder="Select job type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Full-time">Full-time</SelectItem>
+                    <SelectItem value="Part-time">Part-time</SelectItem>
+                    <SelectItem value="Contract">Contract</SelectItem>
+                    <SelectItem value="Internship">Internship</SelectItem>
+                    <SelectItem value="Temporary">Temporary</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="department">Department <span className="text-red-500">*</span></Label>
+                <Select value={formData.department} onValueChange={(value) => handleSelectChange("department", value)} required>
                   <SelectTrigger id="department">
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
@@ -193,33 +250,18 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
                   </SelectContent>
                 </Select>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="type">Job Type</Label>
-                <Select value={formData.type} onValueChange={(value) => handleSelectChange("type", value)}>
-                  <SelectTrigger id="type">
-                    <SelectValue placeholder="Select job type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Full-time">Full-time</SelectItem>
-                    <SelectItem value="Part-time">Part-time</SelectItem>
-                    <SelectItem value="Contract">Contract</SelectItem>
-                    <SelectItem value="Internship">Internship</SelectItem>
-                    <SelectItem value="Temporary">Temporary</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
+                <Label htmlFor="location">Location <span className="text-red-500">*</span></Label>
                 <Input
                   id="location"
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
                   placeholder="e.g. San Francisco, CA"
+                  required
                 />
               </div>
 
@@ -238,7 +280,9 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
 
           <TabsContent value="description" className="mt-6 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="description">Job Description</Label>
+              <Label htmlFor="description">
+                Job Description <span className="text-red-500">*</span>
+              </Label>
               <Textarea
                 id="description"
                 name="description"
@@ -246,11 +290,12 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
                 onChange={handleInputChange}
                 placeholder="Enter a detailed job description..."
                 className="min-h-[200px]"
+                required
               />
             </div>
 
             <div className="space-y-2">
-              <Label>Responsibilities</Label>
+              <Label>Responsibilities <span className="text-red-500">*</span></Label>
               <div className="space-y-2">
                 {formData.responsibilities.map((responsibility, index) => (
                   <div key={index} className="flex items-center gap-2">
@@ -265,6 +310,7 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
                         })
                       }}
                       placeholder="Enter a responsibility..."
+                      required
                     />
                     <Button
                       type="button"
@@ -299,7 +345,7 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
 
           <TabsContent value="requirements" className="mt-6 space-y-4">
             <div className="space-y-2">
-              <Label>Requirements</Label>
+              <Label>Requirements <span className="text-red-500">*</span></Label>
               <div className="space-y-2">
                 {formData.requirements.map((requirement, index) => (
                   <div key={index} className="flex items-center gap-2">
@@ -314,6 +360,7 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
                         })
                       }}
                       placeholder="Enter a requirement..."
+                      required
                     />
                     <Button
                       type="button"
@@ -395,7 +442,9 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
 
           <TabsContent value="skills" className="mt-6 space-y-4">
             <div className="space-y-2">
-              <Label>Required Skills</Label>
+              <Label>
+                Required Skills <span className="text-red-500">*</span>
+              </Label>
               <div className="flex flex-wrap gap-2">
                 {formData.skills.map((skill) => (
                   <Badge key={skill} variant="secondary" className="flex items-center gap-1">
@@ -428,6 +477,9 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
                   Add
                 </Button>
               </div>
+              {formData.skills.length === 0 && (
+                <p className="text-sm text-red-500">At least one required skill is needed</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -475,10 +527,12 @@ export function JobForm({ isEditing = false, jobId }: JobFormProps) {
         </Tabs>
 
         <div className="mt-6 flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={() => router.push("/jobs")}>
+          <Button type="button" variant="outline" onClick={() => router.push("/jobs")} disabled={loading}>
             Cancel
           </Button>
-          <Button type="submit">{isEditing ? "Update Job" : "Create Job"}</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Saving..." : isEditing ? "Update Job" : "Create Job"}
+          </Button>
         </div>
       </CardContent>
     </form>
