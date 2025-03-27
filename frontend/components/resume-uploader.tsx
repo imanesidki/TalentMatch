@@ -21,7 +21,17 @@ if (typeof window !== 'undefined') {
   console.log('Frontend API URL:', API_URL);
 }
 
-export function ResumeUploader({ setStep }: { setStep: (step: number) => void }) {
+interface ResumeUploaderProps {
+  setStep: (step: number) => void;
+  jobId?: number;
+  weights: {
+    skills: number;
+    education: number;
+    experience: number;
+  };
+}
+
+export function ResumeUploader({ setStep, jobId, weights }: ResumeUploaderProps) {
   const [files, setFiles] = useState<File[]>([])
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -51,6 +61,10 @@ export function ResumeUploader({ setStep }: { setStep: (step: number) => void })
 
   const handleUpload = async () => {
     if (files.length === 0) return
+    if (!jobId) {
+      toast.error("Job ID is required")
+      return
+    }
 
     setUploading(true)
     setProgress(0)
@@ -118,10 +132,51 @@ export function ResumeUploader({ setStep }: { setStep: (step: number) => void })
     }
     
     // All uploads completed
+    if (uploadedFiles.length > 0) {
+      try {
+        // Process the uploaded files with the matching algorithm
+        const formData = new FormData()
+        formData.append('job_id', jobId.toString())
+        formData.append('skills_weight', weights.skills.toString())
+        formData.append('education_weight', weights.education.toString())
+        formData.append('experience_weight', weights.experience.toString())
+        
+        // Send the processing request to the backend
+        const response = await fetch(`${API_URL}/resumes/batch-process`, {
+          method: 'POST',
+          body: formData,
+          credentials: 'include'
+        })
+        
+        if (!response.ok) {
+          let errorDetail = response.statusText;
+          try {
+            const errorJson = await response.json();
+            errorDetail = errorJson.detail || errorJson.message || errorDetail;
+          } catch (e) {
+            // If we can't parse JSON, just use the status text
+          }
+          throw new Error(`Processing failed: ${errorDetail}`);
+        }
+        
+        const result = await response.json()
+        console.log('Processing result:', result)
+        
+        toast.success(`Successfully processed ${result.processed_count} resumes`)
+      } catch (error) {
+        console.error('Error processing resumes:', error)
+        if (error instanceof Error) {
+          console.error('Error details:', error.message)
+        }
+        toast.error('Failed to process resumes')
+        hasErrors = true
+      }
+    }
+    
     setUploading(false)
     setUploadComplete(true)
     
-    // Show success or partial success message
+    // Show success or partial success message for uploads
     if (hasErrors) {
       if (uploadedFiles.length > 0) {
         toast.warning(`Uploaded ${uploadedFiles.length} of ${files.length} files`)
@@ -131,9 +186,6 @@ export function ResumeUploader({ setStep }: { setStep: (step: number) => void })
     } else {
       toast.success(`Successfully uploaded ${files.length} files`)
     }
-    
-    // You might want to do something with the uploaded files
-    console.log('Uploaded files:', uploadedFiles)
   }
 
   return (
