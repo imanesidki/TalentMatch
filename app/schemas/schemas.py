@@ -94,6 +94,9 @@ class ScoreBase(BaseModel):
     job_id: int
     resume_id: int
     score: float
+    score_education: Optional[float] = None
+    score_experience: Optional[float] = None
+    score_skills: Optional[float] = None
     matching_skills: Optional[List[str]] = []
     missing_skills: Optional[List[str]] = []
     extra_skills: Optional[List[str]] = []
@@ -164,4 +167,4 @@ class Note(NoteBase):
 
     class Config:
         orm_mode = True
-        from_attributes = True 
+        from_attributes = True

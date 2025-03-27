@@ -21,7 +21,10 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from app.models.models import Base
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from models.models import Base
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -79,4 +82,4 @@ def run_migrations_online() -> None:
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online() 
+    run_migrations_online()
