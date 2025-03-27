@@ -1,18 +1,32 @@
+// ResumeUploader.tsx
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { FileText, Upload, X } from "lucide-react"
+import { toast } from "sonner"
+
+// When running in Docker, the browser can't resolve 'backend' hostname
+// So we need to use 'localhost' for client-side requests
+const isClient = typeof window !== 'undefined';
+const API_URL = isClient 
+  ? 'http://localhost:8000/api' 
+  : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api');
+
+// Debug log to help diagnose issues
+if (typeof window !== 'undefined') {
+  console.log('Frontend API URL:', API_URL);
+}
 
 export function ResumeUploader({ setStep }: { setStep: (step: number) => void }) {
   const [files, setFiles] = useState<File[]>([])
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
   const [uploadComplete, setUploadComplete] = useState(false)
+  const [currentFileIndex, setCurrentFileIndex] = useState(0)
 
   // Effect to handle navigation after upload completes
   useEffect(() => {
@@ -35,24 +49,91 @@ export function ResumeUploader({ setStep }: { setStep: (step: number) => void })
     setFiles(newFiles)
   }
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (files.length === 0) return
 
     setUploading(true)
     setProgress(0)
-
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval)
-          setUploading(false)
-          setUploadComplete(true)
-          return 100
+    setCurrentFileIndex(0)
+    
+    // Calculate progress increment per file
+    const progressIncrement = 100 / files.length
+    
+    // Upload files one by one
+    const uploadedFiles = []
+    let hasErrors = false
+    
+    for (let i = 0; i < files.length; i++) {
+      setCurrentFileIndex(i)
+      
+      try {
+        // Create form data for this file
+        const formData = new FormData()
+        formData.append('file', files[i])
+        
+        // Debug log for file upload
+        console.log(`Uploading file: ${files[i].name} (${files[i].size} bytes) to ${API_URL}/s3/upload`);
+        
+        // Send the file to the backend
+        const response = await fetch(`${API_URL}/s3/upload`, {
+          method: 'POST',
+          body: formData,
+          credentials: 'include', // Include cookies in the request
+          headers: {
+            // Don't set Content-Type header when using FormData
+            // Browser will set it automatically with the correct boundary
+          }
+        })
+        
+        if (!response.ok) {
+          // Get more detailed error information
+          let errorDetail = response.statusText;
+          try {
+            const errorJson = await response.json();
+            errorDetail = errorJson.detail || errorJson.message || errorDetail;
+          } catch (e) {
+            // If we can't parse JSON, just use the status text
+          }
+          console.error(`Upload failed with status ${response.status}: ${errorDetail}`);
+          throw new Error(`Upload failed: ${errorDetail}`);
         }
-        return prev + 10
-      })
-    }, 500)
+        
+        const result = await response.json()
+        console.log(`Upload successful for ${files[i].name}:`, result);
+        uploadedFiles.push(result)
+        
+        // Update progress
+        setProgress((i + 1) * progressIncrement)
+        
+      } catch (error) {
+        console.error(`Error uploading ${files[i].name}:`, error)
+        // More detailed error logging
+        if (error instanceof Error) {
+          console.error('Error details:', error.message)
+        }
+        toast.error(`Failed to upload ${files[i].name}`)
+        hasErrors = true
+        // Continue with next file even if this one failed
+      }
+    }
+    
+    // All uploads completed
+    setUploading(false)
+    setUploadComplete(true)
+    
+    // Show success or partial success message
+    if (hasErrors) {
+      if (uploadedFiles.length > 0) {
+        toast.warning(`Uploaded ${uploadedFiles.length} of ${files.length} files`)
+      } else {
+        toast.error('Failed to upload any files')
+      }
+    } else {
+      toast.success(`Successfully uploaded ${files.length} files`)
+    }
+    
+    // You might want to do something with the uploaded files
+    console.log('Uploaded files:', uploadedFiles)
   }
 
   return (
@@ -64,14 +145,14 @@ export function ResumeUploader({ setStep }: { setStep: (step: number) => void })
               <div className="flex flex-col items-center justify-center text-center">
                 <Upload className="mb-2 h-10 w-10 text-muted-foreground" />
                 <h3 className="font-medium">Select your resumes here</h3>
-                <p className="text-sm text-muted-foreground">Click to browse files (PDF, DOCX, TXT)</p>
+                <p className="text-sm text-muted-foreground">Click to browse files (PDF, DOCX, DOC)</p>
               </div>
               <input
                 type="file"
                 id="file-upload"
                 className="hidden"
                 multiple
-                accept=".pdf,.docx,.txt"
+                accept=".pdf,.docx,.doc"
                 onChange={handleFileChange}
               />
               <Button asChild>
@@ -100,8 +181,8 @@ export function ResumeUploader({ setStep }: { setStep: (step: number) => void })
             {uploading && (
               <div className="my-6 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Uploading...</span>
-                  <span>{progress}%</span>
+                  <span>Uploading {currentFileIndex + 1} of {files.length}: {files[currentFileIndex]?.name}</span>
+                  <span>{Math.round(progress)}%</span>
                 </div>
                 <Progress value={progress} className="h-2" />
               </div>

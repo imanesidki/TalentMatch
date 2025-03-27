@@ -1,7 +1,12 @@
 import { getToken } from '@/lib/auth';
 
 // Base URL from environment variable or fallback
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+// When running in Docker, the browser can't resolve 'backend' hostname
+// So we need to use 'localhost' for client-side requests
+const isClient = typeof window !== 'undefined';
+const API_URL = isClient 
+  ? 'http://localhost:8000/api' 
+  : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api');
 
 export interface Job {
   job_id: number;
@@ -258,4 +263,4 @@ export async function deleteJob(jobId: string): Promise<void> {
       throw new Error(error.detail || 'Failed to delete job');
     }
   }
-} 
+}
