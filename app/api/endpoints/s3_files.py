@@ -1,5 +1,5 @@
 # app/api/endpoints/s3_files.py
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Form
 from fastapi.responses import FileResponse
 from typing import List
 
@@ -13,22 +13,49 @@ def get_s3_service():
     return S3Service()
 
 @router.post("/upload", status_code=201)
-async def upload_file(
-    file: UploadFile = File(...),
+async def upload_files(
+    files: List[UploadFile] = File(...),
+    job_id: int = Form(...),
+    skill_weight: float = Form(...),
+    experience_weight: float = Form(...),
+    education_weight: float = Form(...),
+    location_weight: float = Form(...),
     s3_service: S3Service = Depends(get_s3_service)
 ):
-    """Upload a file to S3"""
-    # Validate file type
-    if not file.filename.lower().endswith(('.pdf', '.docx', '.doc')):
-        raise HTTPException(status_code=400, detail="Only PDF and Word documents are allowed")
+    """Upload multiple files to S3"""
+    uploaded_files = []
+    errors = []
     
-    # Upload to S3
-    s3_key = s3_service.upload_file(file)
+    for file in files:
+        # Validate file type
+        if not file.filename.lower().endswith(('.pdf', '.docx', '.doc')):
+            errors.append(f"Invalid file type for {file.filename}: Only PDF and Word documents are allowed")
+            continue
+        
+        try:
+            # Upload to S3
+            s3_key = s3_service.upload_file(file)
+            uploaded_files.append({
+                "filename": file.filename,
+                "s3_key": s3_key
+            })
+        except Exception as e:
+            errors.append(f"Failed to upload {file.filename}: {str(e)}")
+    
+    if not uploaded_files and errors:
+        raise HTTPException(status_code=400, detail={"errors": errors})
     
     return {
-        "filename": file.filename,
-        "s3_key": s3_key,
-        "message": "File uploaded successfully"
+        "uploaded_files": uploaded_files,
+        "job_id": job_id,
+        "weights": {
+            "skill": skill_weight,
+            "experience": experience_weight,
+            "education": education_weight,
+            "location": location_weight
+        },
+        "message": f"Successfully uploaded {len(uploaded_files)} files",
+        "errors": errors if errors else None
     }
 
 @router.get("/files", response_model=List[str])

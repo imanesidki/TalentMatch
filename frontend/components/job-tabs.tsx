@@ -42,7 +42,7 @@ export default function JobTabs({ jobId, defaultTab, job }: JobTabsProps) {
         <JobDetails jobId={jobId} job={job} />
       </TabsContent>
       <TabsContent value="submit" className="mt-4">
-        <SubmitResumes />
+        <SubmitResumes jobId={jobId} />
       </TabsContent>
       <TabsContent value="matches" className="mt-4">
         <JobCandidates />
