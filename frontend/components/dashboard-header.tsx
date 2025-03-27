@@ -1,53 +1,29 @@
 "use client"
 import { Button } from "@/components/ui/button"
+import { useAppData } from "@/providers/app-data-provider"
 import { useSidebar } from "@/components/sidebar-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Menu } from "lucide-react"
-import { getAuthUser, getToken } from "@/lib/auth"
-import { useEffect, useState } from "react"
 
 export function DashboardHeader() {
-  const { toggle } = useSidebar()
-  const [user, setUser] = useState<{ email: string; firstname?: string; lastname?: string } | null>(null)
-  
-  useEffect(() => {
-    // Get user data from auth
-    const userData = getAuthUser()
+  const { isLoading, currentUser } = useAppData()
+  const { toggleSidebar } = useSidebar()
+
+  // Get user initials from name
+  const getUserInitials = () => {
+    if (!currentUser) return 'U'
     
-    // Fetch the user profile if we have a user
-    if (userData) {
-      // Get current user's full profile
-      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/auth/me`, {
-        headers: {
-          'Authorization': `Bearer ${getToken()}`
-        }
-      })
-      .then(res => {
-        if (res.ok) return res.json()
-        throw new Error('Failed to fetch user profile')
-      })
-      .then(data => {
-        setUser(data)
-      })
-      .catch(err => {
-        console.error('Error fetching user profile:', err)
-        setUser(userData)
-      })
-    }
-  }, [])
-  
-  // Generate initials from user data
-  const getInitials = () => {
-    if (user?.firstname && user?.lastname) {
-      return `${user.firstname.charAt(0)}${user.lastname.charAt(0)}`.toUpperCase()
-    }
-    return 'U'
+    const firstname = currentUser.firstname || ''
+    const lastname = currentUser.lastname || ''
+    
+    const initials = `${firstname.charAt(0)}${lastname.charAt(0)}`
+    return initials.toUpperCase()
   }
-  
+
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background px-4 sm:px-6">
-      <Button variant="ghost" size="icon" className="lg:hidden" onClick={toggle}>
+    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+      <Button variant="ghost" size="icon" className="md:hidden" onClick={toggleSidebar}>
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle Menu</span>
       </Button>
@@ -58,7 +34,7 @@ export function DashboardHeader() {
         <ThemeToggle />
         <Avatar className="h-8 w-8">
           <AvatarImage src="/placeholder-user.jpg?height=32&width=32" alt="Avatar" />
-          <AvatarFallback>{getInitials()}</AvatarFallback>
+          <AvatarFallback>{getUserInitials()}</AvatarFallback>
         </Avatar>
           
       </div>

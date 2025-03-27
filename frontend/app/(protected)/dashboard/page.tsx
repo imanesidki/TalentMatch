@@ -1,10 +1,16 @@
+"use client"
+
 import React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Overview } from "@/components/overview"
 import { RecentCandidates } from "@/components/recent-candidates"
 import { JobPostings } from "@/components/job-postings"
+import { useAppData } from "@/providers/app-data-provider"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function DashboardPage() {
+  const { isLoading, stats } = useAppData()
+
   return (
     <div className="space-y-6">
       <div>
@@ -22,8 +28,16 @@ export default function DashboardPage() {
                 <CardTitle className="text-sm font-medium">Total Candidates</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">1,284</div>
-                <p className="text-xs text-muted-foreground">+24 from last month</p>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-20" />
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">{stats?.total_candidates || 0}</div>
+                    <p className="text-xs text-muted-foreground">
+                      +{stats?.new_candidates || 0} from last month
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
             <Card>
@@ -31,8 +45,16 @@ export default function DashboardPage() {
                 <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">12</div>
-                <p className="text-xs text-muted-foreground">+2 from last month</p>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-20" />
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">{stats?.active_jobs || 0}</div>
+                    <p className="text-xs text-muted-foreground">
+                      +{stats?.new_jobs || 0} from last month
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>
