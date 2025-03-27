@@ -1,64 +1,93 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, Download, Mail, Phone } from "lucide-react"
-import { CandidateTabs } from "@/components/candidate-tabs"
-import { BackButton } from "@/components/back-button"
+"use client"
 
-export default async function CandidateDetailsPage({ params }: { params: { id: string } }) {
-  // In a real app, we would fetch the candidate data based on the ID
-  const candidateId = await params.id
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { CandidateTabs } from "@/components/candidate-tabs"
+import { Mail, Download } from "lucide-react"
+import { Candidate } from "@/types/candidate"
+import { useParams } from "next/navigation"
+
+export default function CandidatePage() {
+  // Use the Next.js hook for client components
+  const params = useParams<{ id: string }>()
+  const id = params.id
+  
+  console.log("Params:", params)
+  console.log("Candidate ID:", id)
+  
+  const [candidate, setCandidate] = useState<Candidate | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchCandidate = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch(`http://localhost:8000/api/candidates/${id}`)
+        if (!response.ok) {
+          throw new Error(`Failed to fetch candidate: ${response.statusText}`)
+        }
+        const data = await response.json()
+        setCandidate(data)
+      } catch (err) {
+        console.error("Error fetching candidate:", err)
+        setError((err as Error).message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (id) {
+      fetchCandidate()
+    }
+  }, [id])
+
+  // Extract position from experience
+  const getPosition = (experience?: string) => {
+    if (!experience) return "Professional"
+    const match = experience.match(/as an? (.+?) at/i) || experience.match(/in (.+?) at/i)
+    return match ? match[1] : "Professional"
+  }
+
+  // Get education institution
+  const getEducationInstitution = (education?: string) => {
+    if (!education) return ""
+    const parts = education.split("from ")
+    return parts.length > 1 ? parts[1] : ""
+  }
+
+  if (loading) {
+    return <div className="container mx-auto py-6">Loading candidate details...</div>
+  }
+
+  if (error || !candidate) {
+    return <div className="container mx-auto py-6">Error: {error || "Candidate not found"}</div>
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <BackButton />
-          <h1 className="text-3xl font-bold tracking-tight">Candidate Profile</h1>
+    <div className="container mx-auto py-6">
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">{candidate.name}</h1>
+          <p className="text-lg text-muted-foreground">Match Score: {(candidate.score * 100).toFixed(1)}%</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Mail className="mr-2 h-4 w-4" />
-            Contact
-          </Button>
-          <Button variant="outline" size="sm">
-            <Download className="mr-2 h-4 w-4" />
-            Download Resume
-          </Button>
-          <Button size="sm">Schedule Interview</Button>
+          {candidate.email && (
+            <Button variant="outline" className="flex gap-2">
+              <Mail className="h-4 w-4" />
+              Contact
+            </Button>
+          )}
+          {candidate.resume?.file_path && (
+            <Button className="flex gap-2">
+              <Download className="h-4 w-4" />
+              Resume
+            </Button>
+          )}
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-4">
-        <Card className="md:col-span-1">
-          <CardHeader>
-            <CardTitle>Sarah Johnson</CardTitle>
-            <CardDescription>Senior Software Engineer</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">sarah.johnson@example.com</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">(555) 123-4567</span>
-            </div>
-            <div className="mt-4 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm font-medium">Match Score</span>
-                <span className="text-sm font-medium text-primary">92%</span>
-              </div>
-              <div className="h-2 w-full rounded-full bg-muted">
-                <div className="h-2 rounded-full bg-primary" style={{ width: "92%" }}></div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="md:col-span-3">
-          <CandidateTabs candidateId={candidateId} />
-        </div>
-      </div>
+      <CandidateTabs candidate={candidate} candidateId={id} />
     </div>
   )
 }

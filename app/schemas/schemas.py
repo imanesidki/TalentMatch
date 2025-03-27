@@ -67,6 +67,40 @@ class Candidate(CandidateBase):
         orm_mode = True
         from_attributes = True
 
+class ResumeInfo(BaseModel):
+    resume_id: int
+    job_id: int
+    summary: Optional[str] = None
+    skills: Optional[List[str]] = []
+    experience: Optional[str] = None
+    education: Optional[str] = None
+    file_path: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
+
+class CandidateResponse(CandidateBase):
+    candidate_id: int
+    score: float
+    # Add resume details as an embedded object
+    resume: Optional[ResumeInfo] = None
+    summary: Optional[str] = None
+    skills: Optional[List[str]] = []
+    experience: Optional[str] = None
+    education: Optional[str] = None
+    matching_skills: Optional[List[str]] = []
+    missing_skills: Optional[List[str]] = []
+    extra_skills: Optional[List[str]] = []
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
+
 # Resume schemas
 class ResumeBase(BaseModel):
     job_id: int

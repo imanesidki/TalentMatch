@@ -42,6 +42,24 @@ type CurrentUser = {
   is_active: boolean
 }
 
+// Define the Candidate type based on the API response
+type Candidate = {
+  candidate_id: number
+  name: string
+  email: string
+  phone: string
+  score: number
+  summary: string
+  skills: string[]
+  experience: string
+  education: string
+  matching_skills: string[]
+  missing_skills: string[]
+  extra_skills: string[]
+  created_at: string
+  updated_at: string
+}
+
 interface AppDataContextType {
   isLoading: boolean
   stats: DashboardStats | null
@@ -50,6 +68,8 @@ interface AppDataContextType {
   activityData: ActivityData | null
   currentUser: CurrentUser | null
   refreshData: () => Promise<void>
+  getCandidatesByJob: (jobId: number) => Promise<Candidate[]>
+  getCandidateById: (candidateId: number) => Promise<Candidate | null>
 }
 
 const defaultContextValue: AppDataContextType = {
@@ -59,7 +79,9 @@ const defaultContextValue: AppDataContextType = {
   jobPostings: [],
   activityData: null,
   currentUser: null,
-  refreshData: async () => {}
+  refreshData: async () => {},
+  getCandidatesByJob: async () => [],
+  getCandidateById: async () => null
 }
 
 const AppDataContext = createContext<AppDataContextType>(defaultContextValue)
@@ -151,6 +173,59 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const getCandidatesByJob = async (jobId: number): Promise<Candidate[]> => {
+    try {
+      const token = getToken()
+      if (!token) return []
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+      console.log(`Fetching candidates from: ${apiUrl}/candidates/job/${jobId}`);
+      
+      const response = await fetch(`${apiUrl}/candidates/job/${jobId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API Error (${response.status}): ${errorText}`);
+        throw new Error(`Error fetching candidates: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      console.log("Candidate data received:", data);
+      return data
+    } catch (error) {
+      console.error("Error fetching candidates by job:", error)
+      return []
+    }
+  }
+
+  const getCandidateById = async (candidateId: number): Promise<Candidate | null> => {
+    try {
+      const token = getToken()
+      if (!token) return null
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+      const response = await fetch(`${apiUrl}/candidates/${candidateId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`Error fetching candidate: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error("Error fetching candidate by ID:", error)
+      return null
+    }
+  }
+
   useEffect(() => {
     fetchDashboardData()
     
@@ -166,7 +241,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     jobPostings,
     activityData,
     currentUser,
-    refreshData: fetchDashboardData
+    refreshData: fetchDashboardData,
+    getCandidatesByJob,
+    getCandidateById
   }
 
   return (

@@ -32,9 +32,15 @@ const notes = [
   },
 ]
 
-export function CandidateNotes() {
+interface CandidateNotesProps {
+  candidateId?: string
+}
+
+export function CandidateNotes({ candidateId }: CandidateNotesProps) {
   const [newNote, setNewNote] = useState("")
 
+  // In a real app, we would use candidateId to fetch notes from the API
+  
   return (
     <div className="space-y-6">
       <Card>

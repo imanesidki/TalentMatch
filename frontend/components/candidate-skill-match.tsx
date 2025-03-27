@@ -4,13 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from "recharts"
+import { Candidate } from "@/types/candidate"
 
-const matchingSkills = ["JavaScript", "TypeScript", "React", "Node.js", "REST APIs", "Git"]
+interface CandidateSkillMatchProps {
+  candidate: Candidate
+}
 
-const missingSkills = ["AWS Lambda", "Serverless"]
-
-const extraSkills = ["GraphQL", "MongoDB", "Docker", "Kubernetes"]
-
+// Sample radar data - in a real app, this might be calculated based on the candidate skills
 const skillRadarData = [
   { subject: "Frontend", candidate: 90, required: 85, fullMark: 100 },
   { subject: "Backend", candidate: 85, required: 80, fullMark: 100 },
@@ -20,7 +20,7 @@ const skillRadarData = [
   { subject: "Architecture", candidate: 85, required: 90, fullMark: 100 },
 ]
 
-export function CandidateSkillMatch() {
+export function CandidateSkillMatch({ candidate }: CandidateSkillMatchProps) {
   return (
     <div className="space-y-6">
       <Card>
@@ -36,36 +36,38 @@ export function CandidateSkillMatch() {
             </TabsList>
             <TabsContent value="matching" className="mt-4">
               <div className="flex flex-wrap gap-2">
-                {matchingSkills.map((skill) => (
+                {candidate.matching_skills.map((skill) => (
                   <Badge key={skill} variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50">
                     {skill}
                   </Badge>
                 ))}
               </div>
               <p className="mt-4 text-sm text-muted-foreground">
-                The candidate matches 6 out of 8 required skills (75% match).
+                The candidate matches {candidate.matching_skills.length} skills.
               </p>
             </TabsContent>
             <TabsContent value="missing" className="mt-4">
               <div className="flex flex-wrap gap-2">
-                {missingSkills.map((skill) => (
+                {candidate.missing_skills.map((skill) => (
                   <Badge key={skill} variant="outline" className="bg-red-50 text-red-700 hover:bg-red-50">
                     {skill}
                   </Badge>
                 ))}
               </div>
-              <p className="mt-4 text-sm text-muted-foreground">The candidate is missing 2 out of 8 required skills.</p>
+              <p className="mt-4 text-sm text-muted-foreground">
+                The candidate is missing {candidate.missing_skills.length} required skills.
+              </p>
             </TabsContent>
             <TabsContent value="extra" className="mt-4">
               <div className="flex flex-wrap gap-2">
-                {extraSkills.map((skill) => (
+                {candidate.extra_skills.map((skill) => (
                   <Badge key={skill} variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
                     {skill}
                   </Badge>
                 ))}
               </div>
               <p className="mt-4 text-sm text-muted-foreground">
-                The candidate has 4 additional skills that may be valuable.
+                The candidate has {candidate.extra_skills.length} additional skills that may be valuable.
               </p>
             </TabsContent>
           </Tabs>
