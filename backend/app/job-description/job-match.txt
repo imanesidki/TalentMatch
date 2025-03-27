@@ -1,0 +1,27 @@
+Job Description: Full-Stack Developer (Python/JavaScript)
+Location: Remote/Hybrid (Morocco)
+Experience Level: Mid-Level (2-4 years)
+
+Key Responsibilities
+Develop and maintain web applications using Django (Python) and React.js.
+
+Implement real-time features (e.g., chat, notifications) with WebSocket/Django Channels.
+
+Containerize applications using Docker and manage orchestration with Docker Compose.
+
+Collaborate on infrastructure projects (NGINX, CI/CD pipelines).
+
+Write clean, scalable C/C++ code for performance-critical components (optional).
+
+Required Skills
+✅ Programming: Python, JavaScript, C/C++.
+✅ Frameworks: Django, React, Tailwind CSS/Bootstrap.
+✅ DevOps: Docker, Nginx, Git/GitHub.
+✅ Soft Skills: Problem-solving, teamwork, adaptability.
+
+Nice-to-Have
+Experience with WebSocket or real-time systems.
+
+Knowledge of CGI or low-level HTTP servers.
+
+Familiarity with Figma for UI/UX collaboration.

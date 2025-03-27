@@ -1,0 +1,26 @@
+services:
+    # frontend:
+    #     depends_on:
+    #         - backend
+    #     container_name : frontend
+    #     build : ./frontend/
+    #     ports:
+    #         - 8080:8080
+    #     restart: on-failure
+    #     env_file: .env
+    #     networks:
+    #         - challenge-network
+
+    backend:
+        container_name: backends
+        # ports:
+        #     - 8000:8000
+        build: ./backend/
+        env_file:
+            - .env
+        networks:
+            - challenge-network
+
+networks:
+    challenge-network:
+        name: challenge-network

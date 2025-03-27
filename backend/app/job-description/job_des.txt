@@ -1,0 +1,51 @@
+Job Title: Full Stack Developer (Django & React)
+
+Location: Remote / On-site (Flexible)
+Employment Type: Full-Time / Contract
+
+Job Summary
+We are looking for a Full Stack Developer with expertise in Django Channels and React.js to join our team. The ideal candidate is passionate about coding, problem-solving, and teamwork. You will be responsible for developing and maintaining scalable web applications, handling real-time communication, and working on infrastructure setup using Docker.
+
+Key Responsibilities
+Develop and maintain web applications using Django, Django Channels, and React.js.
+
+Implement real-time WebSocket communication for live messaging and notifications.
+
+Design responsive UI/UX using HTML, CSS, Tailwind CSS, and Bootstrap.
+
+Set up Docker-based infrastructures, containerizing applications for scalable deployment.
+
+Work with NGINX for reverse proxy and load balancing.
+
+Ensure seamless integration of APIs using Postman for testing and debugging.
+
+Collaborate with cross-functional teams to improve application performance and user experience.
+
+Manage and customize WordPress websites (if applicable).
+
+Required Skills & Experience
+Programming Languages: Python, JavaScript, C, C++.
+
+Frameworks & Libraries: Django, Django Channels, React.js, Tailwind CSS, Bootstrap.
+
+Tools & Technologies: Docker, Nginx, Git/GitHub, Postman, WordPress.
+
+Strong problem-solving, adaptability, and communication skills.
+
+Preferred Qualifications
+Experience working on real-time applications or chat systems.
+
+Familiarity with HTTP servers and network communication.
+
+Background in e-commerce platforms like Jumia.
+
+Ability to manage product data entry and inventory updates (if applicable).
+
+Why Join Us?
+Opportunity to work on exciting, real-world projects.
+
+Collaborative and growth-focused work environment.
+
+Competitive salary and remote work flexibility.
+
+Apply now and be part of an innovative team shaping the future of web technologies!
