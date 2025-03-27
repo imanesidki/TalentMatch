@@ -9,8 +9,7 @@ def get_job(db: Session, job_id: int):
 
 
 def get_jobs(db: Session, skip: int = 0, limit: int = 80):
-    return db.query(Job).offset(skip).limit(limit).all()
-
+    return db.query(Job).order_by(Job.created_at.desc()).offset(skip).limit(limit).all()
 
 def create_job(db: Session, job: JobCreate):
     db_job = Job(
