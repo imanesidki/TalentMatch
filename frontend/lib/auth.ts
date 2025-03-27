@@ -50,7 +50,7 @@ export interface AuthResponse {
 export function setToken(token: string): void {
   if (typeof window === 'undefined') return;
   
-  localStorage.setItem('auth_token', token);
+  // Set in cookies as the primary storage method
   Cookies.set('auth_token', token, { expires: 7, path: '/' });
   Cookies.set('ls_auth_token', token, { expires: 7, path: '/' });
 }
@@ -59,7 +59,7 @@ export function setToken(token: string): void {
 export function clearToken(): void {
   if (typeof window === 'undefined') return;
   
-  localStorage.removeItem('auth_token');
+  // Clear cookies
   Cookies.remove('auth_token', { path: '/' });
   Cookies.remove('ls_auth_token', { path: '/' });
 }
@@ -82,7 +82,7 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
 
   const data = await response.json();
   
-  // Store token in both localStorage and cookie
+  // Store token in cookies
   setToken(data.access_token);
   
   return data;
@@ -121,7 +121,7 @@ export async function logout(): Promise<void> {
   } catch (error) {
     console.error('Logout error:', error);
   } finally {
-    // Clear tokens from both localStorage and cookies
+    // Clear tokens from cookies
     clearToken();
     
     // Redirect to sign in page
@@ -133,12 +133,8 @@ export async function logout(): Promise<void> {
 export function isAuthenticated(): boolean {
   if (typeof window === 'undefined') return false;
   
-  // First check cookies (which are accessible to middleware)
-  const cookieToken = Cookies.get('auth_token') || Cookies.get('ls_auth_token');
-  // Then check localStorage
-  const localToken = localStorage.getItem('auth_token');
-  
-  const token = cookieToken || localToken;
+  // Check cookies for token
+  const token = Cookies.get('auth_token') || Cookies.get('ls_auth_token');
   
   if (!token) return false;
   
@@ -152,14 +148,6 @@ export function isAuthenticated(): boolean {
       return false;
     }
     
-    // If token was only in one place, sync it to both
-    if (cookieToken && !localToken) {
-      localStorage.setItem('auth_token', cookieToken);
-    } else if (localToken && !cookieToken) {
-      Cookies.set('auth_token', localToken, { expires: 7, path: '/' });
-      Cookies.set('ls_auth_token', localToken, { expires: 7, path: '/' });
-    }
-    
     return true;
   } catch (error) {
     clearToken();
@@ -170,14 +158,14 @@ export function isAuthenticated(): boolean {
 // Get authentication token
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('auth_token');
+  return Cookies.get('auth_token') || Cookies.get('ls_auth_token') || null;
 }
 
 // Get authenticated user info
 export function getAuthUser(): { email: string } | null {
   if (typeof window === 'undefined') return null;
   
-  const token = localStorage.getItem('auth_token');
+  const token = getToken();
   if (!token) return null;
   
   try {
@@ -198,7 +186,8 @@ export async function getUserProfile(): Promise<UserData> {
   const response = await fetch(`${API_URL}/auth/me`, {
     headers: {
       'Authorization': `Bearer ${token}`
-    }
+    },
+    credentials: 'include'
   });
 
   if (!response.ok) {
@@ -222,6 +211,7 @@ export async function updateUserProfile(profileData: ProfileUpdateData): Promise
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
     body: JSON.stringify(profileData)
   });
 
@@ -246,6 +236,7 @@ export async function updatePassword(passwordData: PasswordUpdateData): Promise<
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
+    credentials: 'include',
     body: JSON.stringify(passwordData)
   });
 

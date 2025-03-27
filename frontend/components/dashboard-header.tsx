@@ -4,7 +4,7 @@ import { useSidebar } from "@/components/sidebar-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Menu } from "lucide-react"
-import { getAuthUser } from "@/lib/auth"
+import { getAuthUser, getToken } from "@/lib/auth"
 import { useEffect, useState } from "react"
 
 export function DashboardHeader() {
@@ -20,7 +20,7 @@ export function DashboardHeader() {
       // Get current user's full profile
       fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/auth/me`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+          'Authorization': `Bearer ${getToken()}`
         }
       })
       .then(res => {
