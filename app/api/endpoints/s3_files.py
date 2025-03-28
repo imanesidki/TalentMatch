@@ -1,4 +1,5 @@
 # app/api/endpoints/s3_files.py
+from app.job_matcher.models.resume_processing_manager import process_all_resumes
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Form
 from fastapi.responses import FileResponse
 from typing import List
@@ -35,6 +36,19 @@ async def upload_files(
         try:
             # Upload to S3
             s3_key = s3_service.upload_file(file)
+            job_descreption = "" # get job from dataBase
+            data = {
+                "file_name": file.filename,
+                "s3_key": s3_key,
+                'file_content' : file.file_content, # text content
+                "job_descreption": job_descreption,
+                "weights": {
+                    "skill": skill_weight,
+                    "experience": experience_weight,
+                    "education": education_weight,
+                },
+            }
+            process_all_resumes(data)
             uploaded_files.append({
                 "filename": file.filename,
                 "s3_key": s3_key
