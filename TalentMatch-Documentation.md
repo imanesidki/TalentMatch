@@ -202,68 +202,8 @@ The backend API is built with FastAPI and organized into logical modules:
 
 The application uses SQLAlchemy ORM with the following key models:
 
-#### Job
 
-Represents a job posting with details about the position.
-
-**Key fields**:
-- `job_id`: Primary key
-- `title`: Job title
-- `department`: Department name
-- `location`: Job location
-- `type`: Job type (Full-time, Part-time, etc.)
-- `description`: Detailed job description
-- `skills`: Array of required skills
-- `status`: Job status (active, closed)
-
-#### Candidate
-
-Represents a job candidate.
-
-**Key fields**:
-- `candidate_id`: Primary key
-- `name`: Candidate name
-- `email`: Candidate email
-- `phone`: Candidate phone number
-
-#### Resume
-
-Represents a candidate's resume with parsed information.
-
-**Key fields**:
-- `resume_id`: Primary key
-- `candidate_id`: Foreign key to Candidate
-- `job_id`: Foreign key to Job
-- `summary`: Resume summary
-- `skills`: Array of candidate skills
-- `experience`: Experience details
-- `education`: Education details
-- `file_path`: Path to stored resume file
-
-#### Score
-
-Represents a match score between a resume and a job.
-
-**Key fields**:
-- `id`: Primary key
-- `job_id`: Foreign key to Job
-- `resume_id`: Foreign key to Resume
-- `score`: Match score value
-- `matching_skills`: Array of matching skills
-- `missing_skills`: Array of missing skills
-- `extra_skills`: Array of extra skills
-
-#### Recruiter
-
-Represents a recruiter user.
-
-**Key fields**:
-- `id`: Primary key
-- `firstname`: First name
-- `lastname`: Last name
-- `email`: Email address
-- `password`: Hashed password
-- `is_active`: Active status
+![Image](/DataModel.jpeg "Optional title")
 
 ### Authentication System
 
@@ -350,6 +290,21 @@ The `ProtectedRoute` component (`frontend/components/protected-route.tsx`) ensur
 ## Matching Workflow
 
 The matching workflow is a core feature of TalentMatch that involves resume parsing and job matching. This process is designed to efficiently identify the most suitable candidates for job openings.
+
+
+### Main Points:
+- Automates recruitment by intelligently matching resumes to job descriptions.
+- Reduces bias with anonymized data processing for fair evaluations.
+- Delivers fast, accurate scoring using advanced AI and NLP.
+**Key Features:**
+-Extracts skills, education, and experience with precision.
+-Calculates weighted match scores tailored to job needs.
+-Scales effortlessly for single resumes or bulk processing.
+
+**Technologies & Tools:**
+Grok: Powers AI-driven insights.
+LangChain: Manages LLM workflows.
+SpaCy: Enhances resume parsing with robust NLP.
 
 ### Resume Parsing Process
 
