@@ -10,7 +10,7 @@
    - [Prerequisites](#prerequisites)
    - [Environment Configuration](#environment-configuration)
    - [Running with Docker](#running-with-docker)
-   - [Running Locally](#running-locally)
+
 6. [Backend Documentation](#backend-documentation)
    - [API Structure](#api-structure)
    - [Database Models](#database-models)
@@ -21,8 +21,7 @@
    - [Key Components](#key-components)
    - [Authentication Flow](#authentication-flow)
 8. [Matching Workflow](#matching-workflow)
-9. [Known Issues and Fixes](#known-issues-and-fixes)
-10. [Development Workflow](#development-workflow)
+9. [Development Workflow](#development-workflow)
 
 ## Project Overview
 
