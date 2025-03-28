@@ -1,5 +1,6 @@
 all:
 	docker-compose up -d
+	cd frontend && npm install --force && npm run dev
 
 clean:
 	docker system prune -af

@@ -1,16 +1,16 @@
 services:
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
-    depends_on:
-      - backend
-    env_file:
-      - .env.frontend
+  # frontend:
+  #   container_name: frontend
+  #   build:
+  #     context: ./frontend
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - app_network
+  #   env_file:
+  #     - .env.frontend
+  #   volumes:
+  #     - ./frontend:/app
 
   backend:
     build: ./app
@@ -23,6 +23,8 @@ services:
     env_file:
       - .env.backend
     command: uvicorn app.main:app --host 0.0.0.0 --reload
+    networks:
+      - app_network
 
   db:
     image: postgres:15
@@ -32,6 +34,12 @@ services:
       - .env.db
     ports:
       - "5432:5432"
+    networks:
+      - app_network
 
 volumes:
   postgres_data:
+
+networks:
+  app_network:
+    driver: bridge

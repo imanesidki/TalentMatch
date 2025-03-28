@@ -1,6 +1,9 @@
 # TalentMatch
 ## AI candidate screening app that helps recruiting teams in the short-listing process
 
+### How to run the project?
+Simply run the command `make` in your terminal and let the Makefile do the rest.
+
 
 ### Features
 
