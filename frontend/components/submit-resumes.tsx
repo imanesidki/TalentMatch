@@ -7,6 +7,7 @@ import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { ResumeUploader } from "./resume-uploader"
 import LoaderOne from "./ui/loader-one"
+import { CheckCircleIcon } from "lucide-react"
 
 export function SubmitResumes({ jobId }: { jobId: string }) {
   const [skillWeighting, setSkillWeighting] = useState([40])
@@ -99,14 +100,10 @@ export function SubmitResumes({ jobId }: { jobId: string }) {
 
       {step === 3 && (
         <Card>
-          <CardContent className="p-6">
-            <div className="flex flex-col items-center justify-center gap-4">
-              <LoaderOne />
-              <p className="text-center text-muted-foreground">
-                Parsing resumes and calculating match scores...
-              </p>
-            </div>
-          </CardContent>
+          <CardHeader>
+            <CardTitle>Queued for Processing Successfully!</CardTitle>
+            <CardDescription>Your resumes have been successfully queued. You can check the results anytime in the "Scored Candidates" tab.</CardDescription>
+          </CardHeader>
         </Card>
       )}
     </div>
