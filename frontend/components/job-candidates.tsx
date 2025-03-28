@@ -343,7 +343,7 @@ export function JobCandidates({ jobId: propJobId }: { jobId?: number }) {
                       </h3>
                       <div className="flex items-center gap-2">
                         <Badge variant="outline" className="bg-primary/10 text-primary hover:bg-primary/10">
-                          {Math.round(candidate.score * 100)}% Match
+                          {candidate.score.toFixed(2)}% Match
                         </Badge>
                         <span className="text-xs text-muted-foreground">
                           {getRelativeTime(candidate.created_at)}

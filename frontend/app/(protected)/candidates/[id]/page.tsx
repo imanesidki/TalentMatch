@@ -69,7 +69,7 @@ export default function CandidatePage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{candidate.name}</h1>
-          <p className="text-lg text-muted-foreground">Match Score: {(candidate.score * 100).toFixed(1)}%</p>
+          <p className="text-lg text-muted-foreground">Match Score: {candidate.score.toFixed(2)}%</p>
         </div>
         <div className="flex gap-2">
           {candidate.email && (

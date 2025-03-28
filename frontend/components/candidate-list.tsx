@@ -88,7 +88,7 @@ export function CandidateList() {
                   </h3>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="bg-primary/10 text-primary hover:bg-primary/10">
-                      {candidate.score}% Match
+                      {candidate.score.toFixed(2)}% Match
                     </Badge>
                     <span className="text-xs text-muted-foreground">{candidate.date}</span>
                   </div>

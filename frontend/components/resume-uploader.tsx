@@ -59,7 +59,14 @@ export function ResumeUploader({
         return
       }
       
-      setFiles([...files, ...newFiles])
+      const renamedFiles = newFiles.map(file => {
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const extension = file.name.split('.').pop();
+        const newName = `resume_${timestamp}.${extension}`;
+        return new File([file], newName, { type: file.type });
+      });
+      
+      setFiles([...files, ...renamedFiles])
     }
   }
 
