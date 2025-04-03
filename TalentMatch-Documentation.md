@@ -21,7 +21,7 @@
    - [Key Components](#key-components)
    - [Authentication Flow](#authentication-flow)
 8. [Matching Workflow](#matching-workflow)
-9. [Development Workflow](#development-workflow)
+
 
 ## Project Overview
 
@@ -100,7 +100,7 @@ TalentMatch follows a modern full-stack architecture:
 ### Prerequisites
 
 - Docker and Docker Compose (for containerized setup)
-- Python 3.8+ (for local backend development)
+- Python 3.9+ (for local backend development)
 - Node.js 16+ (for local frontend development)
 - PostgreSQL (for local database)
 - AWS S3 account (for file storage)
@@ -112,34 +112,19 @@ The project uses environment files for configuration:
 1. `.env.backend` - Backend environment variables:
    ```
    # Database Configuration
-   DATABASE_URL=postgresql://postgres:password@db:5432/talentmatch
+
 
    # JWT Authentication
-   JWT_SECRET_KEY=your_secure_secret_key_here
-   JWT_ALGORITHM=HS256
-   ACCESS_TOKEN_EXPIRE_MINUTES=60
+
 
    # AWS S3 Configuration
-   AWS_ACCESS_KEY_ID=your_aws_access_key_id
-   AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
-   AWS_REGION=us-east-1
-   S3_BUCKET_NAME=gammachallenge
-   GROQ_API_KEY=your_groq_api_key
-   ```
+
 
 2. `.env.frontend` - Frontend environment variables:
-   ```
-   # API Configuration
-   NEXT_PUBLIC_API_URL=http://backend:8000/api
-   ```
+
 
 3. `.env.db` - Database environment variables:
-   ```
-   # PostgreSQL Configuration
-   POSTGRES_USER=postgres
-   POSTGRES_PASSWORD=password
-   POSTGRES_DB=talentmatch
-   ```
+
 
 ### Running with Docker
 
@@ -157,12 +142,11 @@ The easiest way to run the application is using Docker Compose:
 
 3. Start the application:
    ```bash
-   docker-compose up
+   make
    ```
 
 4. Access the application:
    - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
    - API Documentation: http://localhost:8000/docs
 
 
@@ -370,24 +354,3 @@ This customization allows recruiters to tailor the matching process to specific 
 4. **Manual Review**: Recruiters can add notes and manually adjust scores based on their review, which helps refine the matching algorithm over time.
 
 This comprehensive matching workflow enables recruiters to efficiently process large volumes of applications and identify the most promising candidates for further consideration.
-
-
-
-## Development Workflow
-
-
-#### Docker Commands
-
-- **Start All Services**:
-  ```bash
-  docker-compose up
-  ```
-
-- **Build and Start Services**:
-  ```bash
-  docker-compose up --build
-  ```
-
-- **Stop All Services**:
-  ```bash
-  docker-compose down
