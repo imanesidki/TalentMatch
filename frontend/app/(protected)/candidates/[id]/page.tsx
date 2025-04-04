@@ -23,7 +23,7 @@ export default function CandidatePage() {
     const fetchCandidate = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`http://localhost:8000/api/candidates/${id}`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/candidates/${id}`)
         if (!response.ok) {
           throw new Error(`Failed to fetch candidate: ${response.statusText}`)
         }

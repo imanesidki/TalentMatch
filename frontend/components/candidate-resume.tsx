@@ -23,7 +23,7 @@ export function CandidateResume({ candidate }: CandidateResumeProps) {
       const fileKey = candidate.resume.file_path;
       
       // Create a URL to the download endpoint with the file key
-      const downloadUrl = `http://localhost:8000/api/s3/download/${encodeURIComponent(fileKey)}`;
+      const downloadUrl = `${process.env.NEXT_PUBLIC_API_URL}/s3/download/${encodeURIComponent(fileKey)}`;
       
       // Open the URL in a new tab or initiate download
       window.open(downloadUrl, '_blank');
