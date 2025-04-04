@@ -122,7 +122,7 @@ export function ResumeUploader({
         } catch (e) {
           // If we can't parse JSON, just use the status text
         }
-        console.error(`Upload failed with status ${response.status}: ${errorDetail}`);
+        console.log(`Upload failed with status ${response.status}: ${errorDetail}`);
         throw new Error(`Upload failed: ${errorDetail}`);
       }
       
@@ -148,9 +148,9 @@ export function ResumeUploader({
       setUploadComplete(true)
       
     } catch (error) {
-      console.error('Error uploading files:', error)
+      console.log('Error uploading files:', error)
       if (error instanceof Error) {
-        console.error('Error details:', error.message)
+        console.log('Error details:', error.message)
       }
       toast.error('Failed to upload files')
     } finally {

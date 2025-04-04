@@ -36,7 +36,7 @@ export function useAuth(redirectIfNotAuthenticated = true) {
           router.push(`/signin?redirect=${encodeURIComponent(window.location.pathname)}`)
         }
       } catch (error) {
-        console.error('Error checking authentication:', error)
+        console.log('Error checking authentication:', error)
         setAuthState({
           isAuthenticated: false,
           isLoading: false,

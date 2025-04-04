@@ -124,7 +124,7 @@ export async function logout(): Promise<void> {
       credentials: 'include',
     });
   } catch (error) {
-    console.error('Logout error:', error);
+    console.log('Logout error:', error);
   } finally {
     // Clear tokens from cookies
     clearToken();

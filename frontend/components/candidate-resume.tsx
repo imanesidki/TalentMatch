@@ -28,7 +28,7 @@ export function CandidateResume({ candidate }: CandidateResumeProps) {
       // Open the URL in a new tab or initiate download
       window.open(downloadUrl, '_blank');
     } catch (error) {
-      console.error("Error downloading resume:", error);
+      console.log("Error downloading resume:", error);
     }
   };
 

@@ -42,7 +42,7 @@ export function AccountSettings() {
           email: userData.email
         });
       } catch (error) {
-        console.error("Failed to fetch user data", error);
+        console.log("Failed to fetch user data", error);
         toast({
           title: "Error",
           description: "Failed to load user profile",
@@ -116,7 +116,7 @@ export function AccountSettings() {
       // Refresh the page to update the UI with new user data
       router.refresh();
     } catch (error) {
-      console.error("Failed to update profile", error);
+      console.log("Failed to update profile", error);
       toast({
         title: "Error",
         description: "Failed to update profile. Please try again.",
@@ -167,7 +167,7 @@ export function AccountSettings() {
         confirm_password: ''
       });
     } catch (error) {
-      console.error("Failed to update password", error);
+      console.log("Failed to update password", error);
       toast({
         title: "Error",
         description: "Failed to update password. Please check your current password and try again.",

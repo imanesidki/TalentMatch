@@ -167,7 +167,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         setCurrentUser(userData)
       }
     } catch (error) {
-      console.error("Error fetching dashboard data:", error)
+      console.log("Error fetching dashboard data:", error)
     } finally {
       setIsLoading(false)
     }
@@ -189,7 +189,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`API Error (${response.status}): ${errorText}`);
+        console.log(`API Error (${response.status}): ${errorText}`);
         throw new Error(`Error fetching candidates: ${response.statusText}`)
       }
 
@@ -197,7 +197,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       console.log("Candidate data received:", data);
       return data
     } catch (error) {
-      console.error("Error fetching candidates by job:", error)
+      console.log("Error fetching candidates by job:", error)
       return []
     }
   }
@@ -221,7 +221,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const data = await response.json()
       return data
     } catch (error) {
-      console.error("Error fetching candidate by ID:", error)
+      console.log("Error fetching candidate by ID:", error)
       return null
     }
   }

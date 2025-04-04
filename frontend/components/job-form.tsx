@@ -180,7 +180,7 @@ export function JobForm({ isEditing = false, jobId, jobData }: JobFormProps) {
       }
       router.push("/jobs")
     } catch (error) {
-      console.error("Error saving job:", error)
+      console.log("Error saving job:", error)
       toast.error(error instanceof Error ? error.message : "Failed to save job")
     } finally {
       setLoading(false)

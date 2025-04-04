@@ -19,7 +19,7 @@ export function JobList() {
         const data = await getJobs()
         setJobs(data)
       } catch (error) {
-        console.error("Error fetching jobs:", error)
+        console.log("Error fetching jobs:", error)
         toast.error("Failed to load jobs")
       } finally {
         setLoading(false)

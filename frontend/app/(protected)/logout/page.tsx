@@ -12,7 +12,7 @@ export default function LogoutPage() {
       try {
         await logout()
       } catch (error) {
-        console.error('Logout failed:', error)
+        console.log('Logout failed:', error)
       } finally {
         // Ensure redirect happens even if there was an error
         router.push('/signin')

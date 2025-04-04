@@ -87,7 +87,7 @@ export function JobCandidates({ jobId: propJobId }: { jobId?: number }) {
           setMatchScore([Math.max(0, lowestScore - 5)]) // Set slightly lower than the lowest to ensure all are shown
         }
       } catch (error) {
-        console.error("Failed to load candidates:", error)
+        console.log("Failed to load candidates:", error)
       } finally {
         setIsLoading(false)
       }

@@ -30,7 +30,7 @@ export default function CandidatePage() {
         const data = await response.json()
         setCandidate(data)
       } catch (err) {
-        console.error("Error fetching candidate:", err)
+        console.log("Error fetching candidate:", err)
         setError((err as Error).message)
       } finally {
         setLoading(false)

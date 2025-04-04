@@ -30,7 +30,7 @@ export function FileViewer({ refreshInterval = 30000 }: FileViewerProps) {
       const data = await response.json()
       setFiles(data)
     } catch (error) {
-      console.error('Error fetching files:', error)
+      console.log('Error fetching files:', error)
     } finally {
       setLoading(false)
     }
@@ -59,7 +59,7 @@ export function FileViewer({ refreshInterval = 30000 }: FileViewerProps) {
       link.click()
       document.body.removeChild(link)
     } catch (error) {
-      console.error('Error downloading file:', error)
+      console.log('Error downloading file:', error)
       toast.error('Failed to download file')
     }
   }
@@ -78,7 +78,7 @@ export function FileViewer({ refreshInterval = 30000 }: FileViewerProps) {
       fetchFiles()
       toast.success('File deleted successfully')
     } catch (error) {
-      console.error('Error deleting file:', error)
+      console.log('Error deleting file:', error)
       toast.error('Failed to delete file')
     }
   }
