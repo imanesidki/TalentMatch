@@ -3,6 +3,9 @@ from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Get JWT settings from environment variables or use defaults
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "gamma_secret_key")

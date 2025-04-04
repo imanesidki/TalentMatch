@@ -7,6 +7,10 @@ from fastapi import UploadFile, HTTPException
 from io import BytesIO
 import tempfile
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # Set up logging
 logger = logging.getLogger(__name__)
 

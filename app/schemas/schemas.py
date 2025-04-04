@@ -46,7 +46,6 @@ class Job(JobBase):
     created_by: Optional[int] = None
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 # Candidate schemas
@@ -64,7 +63,6 @@ class Candidate(CandidateBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 class ResumeInfo(BaseModel):
@@ -79,7 +77,6 @@ class ResumeInfo(BaseModel):
     updated_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 class CandidateResponse(CandidateBase):
@@ -98,7 +95,6 @@ class CandidateResponse(CandidateBase):
     updated_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 # Resume schemas
@@ -120,7 +116,6 @@ class Resume(ResumeBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 # Score schemas
@@ -141,7 +136,6 @@ class Score(ScoreBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
         from_attributes = True
 
 # Recruiter schemas
@@ -168,7 +162,7 @@ class RecruiterResponse(RecruiterBase):
     is_active: bool
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Token(BaseModel):
     access_token: str
@@ -197,5 +191,4 @@ class Note(NoteBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
         from_attributes = True 

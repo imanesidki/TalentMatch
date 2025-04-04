@@ -1,5 +1,8 @@
 import os
 from logging.config import fileConfig
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env file
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -11,7 +14,7 @@ from alembic import context
 config = context.config
 
 # Get the database URL from environment variable if available
-database_url = os.getenv("DATABASE_URL", "postgresql://postgres:password@db:5432/talentmatch")
+database_url = os.getenv("DATABASE_URL")
 config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.
@@ -28,7 +31,6 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.

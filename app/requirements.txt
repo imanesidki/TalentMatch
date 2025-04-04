@@ -25,4 +25,4 @@ PyPDF2
 spacy
 langchain-core
 groq
-dotenv
+python-dotenv
