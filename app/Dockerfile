@@ -1,27 +1,21 @@
-FROM continuumio/miniconda3:latest
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Create conda environment
-RUN conda create -n myenv python=3.11 -y
-SHELL ["/bin/bash", "-c"]
-
-# Activate conda environment and install dependencies
-ENV PATH /opt/conda/envs/myenv/bin:$PATH
-ENV CONDA_DEFAULT_ENV myenv
-
-# Install spacy and its dependencies using conda
-RUN conda install -c conda-forge spacy -y && \
-    conda run -n myenv python -m spacy download en_core_web_sm
+# Install system dependencies for psycopg2
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file
 COPY requirements.txt .
 
-# Remove spacy from requirements since we installed it with conda
-RUN grep -v "^spacy" requirements.txt > requirements_no_spacy.txt && \
-    conda run -n myenv pip install --no-cache-dir -r requirements_no_spacy.txt
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt && \
+    python -m spacy download en_core_web_sm
 
 # Copy application code
 COPY . .
 
-CMD ["conda", "run", "-n", "myenv", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the application
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
