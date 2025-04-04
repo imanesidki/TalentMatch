@@ -4,10 +4,7 @@ import Cookies from 'js-cookie';
 // Base URL from environment variable or fallback
 // When running in Docker, the browser can't resolve 'backend' hostname
 // So we need to use 'localhost' for client-side requests
-const isClient = typeof window !== 'undefined';
-const API_URL = isClient 
-  ? 'http://localhost:8000/api' 
-  : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api');
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export interface LoginCredentials {
   email: string;
