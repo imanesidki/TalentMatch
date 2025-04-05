@@ -186,14 +186,13 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
           Authorization: `Bearer ${token}`,
         },
       })
+      const data = await response.json()
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`API Error (${response.status}): ${errorText}`);
-        throw new Error(`Error fetching candidates: ${response.statusText}`)
+        console.log(`Error: ${data.detail}`);
+        return []
       }
 
-      const data = await response.json()
       console.log("Candidate data received:", data);
       return data
     } catch (error) {
