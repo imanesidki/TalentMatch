@@ -3,10 +3,9 @@ import { getToken } from '@/lib/auth';
 // Base URL from environment variable or fallback
 // When running in Docker, the browser can't resolve 'backend' hostname
 // So we need to use 'localhost' for client-side requests
-const isClient = typeof window !== 'undefined';
-const API_URL = isClient 
-  ? 'http://localhost:8000/api' 
-  : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api');
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL_SERVER_SIDE = process.env.API_URL_SERVER_SIDE;
 
 export interface Job {
   job_id: number;
@@ -140,7 +139,7 @@ export async function getJobs(): Promise<Job[]> {
     return getJobsClient(token);
   } else {
     // Server-side: use Next.js fetch with cookies
-    const response = await fetch(`${API_URL}/jobs`, {
+    const response = await fetch(`${API_URL_SERVER_SIDE}/jobs`, {
       headers: {
         // Server-side fetch will automatically include cookies
         'Content-Type': 'application/json',
@@ -167,7 +166,8 @@ export async function getJob(jobId: string): Promise<Job> {
     return getJobClient(jobId, token);
   } else {
     // Server-side: use Next.js fetch with cookies
-    const response = await fetch(`${API_URL}/jobs/${jobId}`, {
+    console.log(API_URL_SERVER_SIDE)
+    const response = await fetch(`${API_URL_SERVER_SIDE}/jobs/${jobId}`, {
       headers: {
         // Server-side fetch will automatically include cookies
         'Content-Type': 'application/json',
@@ -194,7 +194,7 @@ export async function createJob(jobData: JobCreateData): Promise<Job> {
     return createJobClient(jobData, token);
   } else {
     // Server-side: use Next.js fetch with cookies
-    const response = await fetch(`${API_URL}/jobs`, {
+    const response = await fetch(`${API_URL_SERVER_SIDE}/jobs`, {
       method: 'POST',
       headers: {
         // Server-side fetch will automatically include cookies
@@ -222,7 +222,7 @@ export async function updateJob(jobId: string, jobData: Partial<JobCreateData>):
     return updateJobClient(jobId, jobData, token);
   } else {
     // Server-side: use Next.js fetch with cookies
-    const response = await fetch(`${API_URL}/jobs/${jobId}`, {
+    const response = await fetch(`${API_URL_SERVER_SIDE}/jobs/${jobId}`, {
       method: 'PUT',
       headers: {
         // Server-side fetch will automatically include cookies
@@ -250,7 +250,7 @@ export async function deleteJob(jobId: string): Promise<void> {
     return deleteJobClient(jobId, token);
   } else {
     // Server-side: use Next.js fetch with cookies
-    const response = await fetch(`${API_URL}/jobs/${jobId}`, {
+    const response = await fetch(`${API_URL_SERVER_SIDE}/jobs/${jobId}`, {
       method: 'DELETE',
       headers: {
         // Server-side fetch will automatically include cookies

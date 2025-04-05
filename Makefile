@@ -1,20 +1,26 @@
-all:
-	docker-compose up -d
-	cd frontend && npm install --force && npm run dev
+up:
+	docker-compose -f docker-compose.yml up --build
 
-clean:
-	docker system prune -af
-	docker volume prune -f
-	docker image prune -af
-	docker network prune -f
-	docker container prune -f
-	docker builder prune -f
-	rm -rf frontend/node_modules
-	rm -rf frontend/package-lock.json
+build:
+	docker-compose -f docker-compose.yml build
 
 down:
-	docker-compose down
+	docker-compose -f docker-compose.yml down
 
-reload: down clean all
+start:
+	docker-compose -f docker-compose.yml start
 
-re: down all
+stop:
+	docker-compose -f docker-compose.yml stop
+
+restart:
+	docker-compose -f docker-compose.yml restart
+
+logs:
+	docker-compose -f docker-compose.yml logs
+
+ps:
+	docker-compose -f docker-compose.yml ps
+
+remove-all:
+	docker rmi $$(docker images -aq) ; docker volume prune -f $$(docker volume ls -q) ; docker system prune -f 
