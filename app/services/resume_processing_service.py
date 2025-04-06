@@ -4,7 +4,7 @@ import logging
 from sqlalchemy.orm import Session
 from fastapi import BackgroundTasks, HTTPException, Depends
 from app.db.database import get_db
-from app.services.resume_processing_manager import process_all_resumes
+from app.job_matcher.resume_processing_manager import process_all_resumes
 from app.services.s3_service import S3Service
 from app.models.models import Job, Resume
 from typing import List, Dict, Any
@@ -64,10 +64,7 @@ class ResumeProcessingService:
                 "location": job.location or "",
                 "type": job.type or ""
             }
-            
-            # Log the job description data for debugging
-            logger.info(f"Job description data prepared: {job_description_data}")
-            
+
             # Process resumes asynchronously
             result = await process_all_resumes(
                 job_id=job_id,
