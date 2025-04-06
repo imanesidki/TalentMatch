@@ -52,13 +52,13 @@ export function RecentCandidates() {
   // Format match score as percentage
   const formatScore = (score: number | null) => {
     if (score === null) return 'N/A'
-    return `${Math.round(score * 100)}%`
+    return `${score.toFixed(2)}%`
   }
 
   // Generate a color based on score
   const getScoreColor = (score: number | null) => {
     if (score === null) return 'bg-gray-200 text-gray-600'
-    const scorePercent = score * 100
+    const scorePercent = parseFloat(score.toFixed(2))
     if (scorePercent >= 80) return 'bg-green-100 text-green-700'
     if (scorePercent >= 60) return 'bg-blue-100 text-blue-700'
     if (scorePercent >= 40) return 'bg-yellow-100 text-yellow-700'
