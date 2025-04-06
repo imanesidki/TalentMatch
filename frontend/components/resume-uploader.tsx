@@ -60,9 +60,10 @@ export function ResumeUploader({
       }
       
       const renamedFiles = newFiles.map(file => {
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const timestamp = Date.now(); // Use epoch timestamp
+        const randomNumber = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
         const extension = file.name.split('.').pop();
-        const newName = `resume_${timestamp}.${extension}`;
+        const newName = `resume_${timestamp}_${randomNumber}.${extension}`;
         return new File([file], newName, { type: file.type });
       });
       
