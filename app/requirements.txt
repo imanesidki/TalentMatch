@@ -11,13 +11,6 @@ email-validator==2.0.0
 bcrypt==4.0.1 
 boto3==1.37.21
 python-decouple
-numpy
-scikit-learn
-pdfplumber
-langchain 
-pypdf
 langchain-groq
 docx2txt
 PyPDF2
-langchain-core
-spacy
