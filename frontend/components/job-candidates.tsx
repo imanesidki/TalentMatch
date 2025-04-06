@@ -68,7 +68,7 @@ export function JobCandidates({ jobId: propJobId }: { jobId?: number }) {
   const [skillInput, setSkillInput] = useState("")
   const [selectedSkills, setSelectedSkills] = useState<string[]>([])
   const [showFilters, setShowFilters] = useState(false)
-  const [matchScore, setMatchScore] = useState<number[]>([0]) // Default to 0 until we load candidates
+  const [matchScore, setMatchScore] = useState<number>(0)
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [sortOrder, setSortOrder] = useState<"match-desc" | "match-asc">("match-desc")
 
@@ -83,8 +83,8 @@ export function JobCandidates({ jobId: propJobId }: { jobId?: number }) {
         
         // Set the match score filter to the lowest candidate score (or 0 if no candidates)
         if (data.length > 0) {
-          const lowestScore = Math.floor(Math.min(...data.map(c => c.score * 100)))
-          setMatchScore([Math.max(0, lowestScore - 5)]) // Set slightly lower than the lowest to ensure all are shown
+          const lowestScore = Math.floor(Math.min(...data.map((c: ApiCandidate) => c.score)))
+          setMatchScore(Math.max(0, lowestScore - 5))
         }
       } catch (error) {
         console.error("Failed to load candidates:", error)
@@ -115,8 +115,8 @@ export function JobCandidates({ jobId: propJobId }: { jobId?: number }) {
   // Filter and sort candidates based on selected skills and match score
   const filteredCandidates = candidates
     .filter((candidate) => {
-      // Filter by match score (convert percentage to decimal)
-      if ((candidate.score * 100) < matchScore[0]) return false;
+      // Filter by match score
+      if (candidate.score < matchScore) return false;
       
       // Filter by skills if any are selected
       if (selectedSkills.length > 0) {
@@ -160,7 +160,7 @@ export function JobCandidates({ jobId: propJobId }: { jobId?: number }) {
   // Get the lowest score from candidates (for filters)
   const getLowestScore = () => {
     if (candidates.length === 0) return 0;
-    return Math.max(0, Math.floor(Math.min(...candidates.map(c => c.score * 100))) - 5); // Slightly lower than lowest
+    return Math.max(0, Math.floor(Math.min(...candidates.map((c: ApiCandidate) => c.score))) - 5); // Slightly lower than lowest
   };
 
   return (
@@ -295,21 +295,21 @@ export function JobCandidates({ jobId: propJobId }: { jobId?: number }) {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Match Score</label>
-                <span className="text-sm text-muted-foreground">{matchScore}%+</span>
+                <span className="text-sm text-muted-foreground">{matchScore.toFixed(0)}%+</span>
               </div>
               <Slider 
                 min={0} 
                 max={100} 
                 step={1} 
-                value={matchScore} 
-                onValueChange={setMatchScore} 
+                value={[matchScore]}
+                onValueChange={(value) => setMatchScore(value[0])}
               />
             </div>
           </div>
 
           <div className="mt-4 flex justify-end gap-2">
             <Button variant="outline" size="sm" onClick={() => {
-              setMatchScore([getLowestScore()])
+              setMatchScore(getLowestScore())
               setSelectedSkills([])
             }}>
               Reset
