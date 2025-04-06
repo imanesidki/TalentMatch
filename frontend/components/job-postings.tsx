@@ -58,7 +58,7 @@ export function JobPostings() {
   // Format score as percentage
   const formatScore = (score: number | null) => {
     if (score === null) return 'N/A'
-    return `${Math.round(score * 100)}%`
+    return `${score.toFixed(2)}%`
   }
 
   // Get job type badge color
