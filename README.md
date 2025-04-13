@@ -7,7 +7,7 @@ Simply run the command `make` in your terminal and let the Makefile do the rest.
 
 ### Features
 
-- Authentication: Signin and signup for recuiters.
+- Secure Authentication: Complete secure authentication flow for recruiters using JWT.
 
 - Resume Parsing: Extract key details (skills, experience, education) from resumes.
 
@@ -32,4 +32,4 @@ Simply run the command `make` in your terminal and let the Makefile do the rest.
 - Containerization: Docker
 - Database: Postgresql
 - Cloud Storage: AWS S3
-<br>...
+- AI: Grok, llama3, langchain
