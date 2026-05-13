@@ -1,3 +1,5 @@
+<img width="1726" height="937" alt="Screenshot 2026-05-13 at 3 36 01 PM" src="https://github.com/user-attachments/assets/a4e4cf32-0395-4286-807c-f94138cbdbe6" />
+
 # TalentMatch
 ## AI candidate screening app that helps recruiting teams in the short-listing process
 
